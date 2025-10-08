@@ -1,39 +1,83 @@
 # CryptoSteg
 
-CryptoSteg is a comprehensive web-based cybersecurity toolkit designed for college students studying cybersecurity, cryptography, and steganography. It provides a collection of interactive tools for encryption, decryption, hashing, and various security-related operations.
+![CryptoSteg Logo](assets/images/logo.png)
+
+## Overview
+
+CryptoSteg is an advanced cryptography and steganography toolkit providing a comprehensive suite of encryption, hashing, and data hiding tools with an intuitive, futuristic interface. This web application offers powerful cryptographic capabilities for both educational purposes and practical security implementations.
 
 ## Features
 
-- **Ciphers**: Classic and modern encryption techniques including Caesar, Vigenère, Substitution, and more
-- **Hashing**: Generate and verify various hash functions (MD5, SHA-1, SHA-256, etc.)
-- **Password Tools**: Password strength analyzer, generator, and hash cracker
-- **Steganography**: Hide and extract data in images
-- **Encoders/Decoders**: Base64, URL, HTML encoding/decoding
-- **Interactive Enigma Machine**: Fully functional simulation of the WWII-era encryption device
-- **Network Tools**: Ping, traceroute, port scanning (educational purposes only)
+- **Multiple Cipher Methods**: Caesar, Vigenère, Atbash, ROT13, and more
+- **Advanced Hashing Tools**: Generate and verify hashes with MD5, SHA-1, SHA-256, and others
+- **Password Management**: Secure password generation, strength analysis, and storage
+- **Steganography Tools**: Hide data within images, audio, and text files
+- **Interactive Enigma Machine**: Historically accurate simulation of the WWII encryption device
+- **Modern Encryption**: AES, RSA, and other contemporary cryptographic standards
+
+## Getting Started
+
+### Prerequisites
+- Modern web browser (Chrome, Firefox, Edge, Safari)
+- JavaScript enabled
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/nukhu-cybersec/cryptosteg.git
+```
+
+2. Navigate to the project directory:
+```bash
+cd cryptosteg
+```
+
+3. Open `index.html` in your browser or use a local server:
+```bash
+# Using Python for a quick server
+python -m http.server 8000
+```
+
+4. Access the application at `http://localhost:8000`
 
 ## Usage
 
-1. Select a tool category from the navigation panel
-2. Choose a specific tool from the expanded menu
-3. Enter your input data and configure tool-specific settings
-4. Click the appropriate action button (encrypt, decrypt, hash, etc.)
-5. View results in the output area
+### Ciphers
+Select from various cipher methods, input your text, set your key or parameters, and encrypt or decrypt messages instantly.
 
-## Technologies Used
+### Hashing
+Generate secure hashes from text input or verify data integrity by comparing hash values.
 
-- HTML5
-- CSS3 with Tailwind CSS
-- JavaScript (ES6+)
+### Password Tools
+Create strong, random passwords with customizable parameters or check your existing passwords against common security standards.
 
-## Educational Purpose
+### Steganography
+Hide secret messages within images or extract hidden data from steganographic files.
 
-This toolkit is designed for educational purposes to help cybersecurity students understand and experiment with various security concepts in a practical, hands-on environment.
+### Enigma Machine
+Experience a historically accurate simulation of the WWII Enigma encryption machine with configurable rotors, plugboard, and reflectors.
+
+## Security Notice
+
+This application is designed for educational purposes and legitimate security practices. Please use these tools responsibly and legally.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Disclaimer
+## Acknowledgments
 
-Some tools in this application can be used for security testing. Always ensure you have proper authorization before using these tools on any systems or networks. Unauthorized use may be illegal and unethical.
+- Cryptography libraries and resources
+- Historical documentation on the Enigma machine
+- Modern security standards and practices
+
+## Contact
+
+Created by [@nukhu-cybersec](https://github.com/nukhu-cybersec)
+
+Last Updated: 2025-10-08 13:38:30 UTC
