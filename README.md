@@ -1,6 +1,4 @@
-# CryptoSteg
-
-![CryptoSteg Logo](assets/images/logo.png)
+# CyberSwissToolkit
 
 ## Overview
 
