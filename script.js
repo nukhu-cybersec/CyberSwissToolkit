@@ -117,56 +117,123 @@ function initNavigationAndTabs() {
 
 // Classical Cipher Tools
 function initCipherTools() {
-    // Caesar Cipher
-    if (document.getElementById('caesar-encrypt')) {
-        document.getElementById('caesar-encrypt').addEventListener('click', function() {
-            const input = document.getElementById('caesar-input').value;
-            const shift = parseInt(document.getElementById('caesar-shift').value);
-            document.getElementById('caesar-output').value = caesarCipher(input, shift);
-        });
-        
-        document.getElementById('caesar-decrypt').addEventListener('click', function() {
-            const input = document.getElementById('caesar-input').value;
-            const shift = parseInt(document.getElementById('caesar-shift').value);
-            document.getElementById('caesar-output').value = caesarCipher(input, (26 - shift) % 26);
-        });
-    }
-    
-    // Vigenère Cipher
-    if (document.getElementById('vigenere-encrypt')) {
-        document.getElementById('vigenere-encrypt').addEventListener('click', function() {
-            const input = document.getElementById('vigenere-input').value;
-            const key = document.getElementById('vigenere-key').value;
-            document.getElementById('vigenere-output').value = vigenereCipher(input, key, true);
-        });
-        
-        document.getElementById('vigenere-decrypt').addEventListener('click', function() {
-            const input = document.getElementById('vigenere-input').value;
-            const key = document.getElementById('vigenere-key').value;
-            document.getElementById('vigenere-output').value = vigenereCipher(input, key, false);
+    // Cipher method selector - show/hide options based on selected cipher
+    const cipherMethod = document.getElementById('cipher-method');
+    if (cipherMethod) {
+        cipherMethod.addEventListener('change', function() {
+            const method = this.value;
+            
+            // Hide all option groups
+            document.querySelectorAll('.option-group').forEach(group => {
+                group.classList.add('hidden');
+            });
+            
+            // Show the selected cipher's options
+            const optionGroup = document.getElementById(method + '-options');
+            if (optionGroup) {
+                optionGroup.classList.remove('hidden');
+            }
         });
     }
     
-    // Atbash Cipher
-    if (document.getElementById('atbash-convert')) {
-        document.getElementById('atbash-convert').addEventListener('click', function() {
-            const input = document.getElementById('atbash-input').value;
-            document.getElementById('atbash-output').value = atbashCipher(input);
+    // Encrypt button
+    if (document.getElementById('encrypt-btn')) {
+        document.getElementById('encrypt-btn').addEventListener('click', function() {
+            const method = document.getElementById('cipher-method').value;
+            const input = document.getElementById('plaintext').value;
+            const output = document.getElementById('ciphertext');
+            
+            try {
+                switch(method) {
+                    case 'caesar':
+                        const caesarShift = parseInt(document.getElementById('caesar-shift').value) || 3;
+                        output.value = caesarCipher(input, caesarShift);
+                        break;
+                    case 'vigenere':
+                        const vigenereKey = document.getElementById('vigenere-key').value || 'KEY';
+                        output.value = vigenereCipher(input, vigenereKey, true);
+                        break;
+                    case 'atbash':
+                        output.value = atbashCipher(input);
+                        break;
+                    case 'rot13':
+                        output.value = caesarCipher(input, 13);
+                        break;
+                    case 'railfence':
+                        output.value = railFenceEncrypt(input, 3);
+                        break;
+                    case 'playfair':
+                        output.value = 'Playfair cipher not yet implemented';
+                        break;
+                    default:
+                        output.value = 'Unknown cipher method';
+                }
+            } catch (e) {
+                output.value = 'Error: ' + e.message;
+            }
         });
     }
     
-    // Rail Fence Cipher
-    if (document.getElementById('railfence-encrypt')) {
-        document.getElementById('railfence-encrypt').addEventListener('click', function() {
-            const input = document.getElementById('railfence-input').value;
-            const rails = parseInt(document.getElementById('railfence-rails').value);
-            document.getElementById('railfence-output').value = railFenceEncrypt(input, rails);
+    // Decrypt button
+    if (document.getElementById('decrypt-btn')) {
+        document.getElementById('decrypt-btn').addEventListener('click', function() {
+            const method = document.getElementById('cipher-method').value;
+            const input = document.getElementById('plaintext').value;
+            const output = document.getElementById('ciphertext');
+            
+            try {
+                switch(method) {
+                    case 'caesar':
+                        const caesarShift = parseInt(document.getElementById('caesar-shift').value) || 3;
+                        output.value = caesarCipher(input, 26 - caesarShift);
+                        break;
+                    case 'vigenere':
+                        const vigenereKey = document.getElementById('vigenere-key').value || 'KEY';
+                        output.value = vigenereCipher(input, vigenereKey, false);
+                        break;
+                    case 'atbash':
+                        output.value = atbashCipher(input);
+                        break;
+                    case 'rot13':
+                        output.value = caesarCipher(input, 13);
+                        break;
+                    case 'railfence':
+                        output.value = railFenceDecrypt(input, 3);
+                        break;
+                    case 'playfair':
+                        output.value = 'Playfair cipher not yet implemented';
+                        break;
+                    default:
+                        output.value = 'Unknown cipher method';
+                }
+            } catch (e) {
+                output.value = 'Error: ' + e.message;
+            }
         });
-        
-        document.getElementById('railfence-decrypt').addEventListener('click', function() {
-            const input = document.getElementById('railfence-input').value;
-            const rails = parseInt(document.getElementById('railfence-rails').value);
-            document.getElementById('railfence-output').value = railFenceDecrypt(input, rails);
+    }
+    
+    // Swap button (swap input and output)
+    if (document.getElementById('swap-btn')) {
+        document.getElementById('swap-btn').addEventListener('click', function() {
+            const input = document.getElementById('plaintext');
+            const output = document.getElementById('ciphertext');
+            const temp = input.value;
+            input.value = output.value;
+            output.value = temp;
+        });
+    }
+    
+    // Copy button
+    if (document.getElementById('copy-btn')) {
+        document.getElementById('copy-btn').addEventListener('click', function() {
+            const output = document.getElementById('ciphertext');
+            copyToClipboard(output.value);
+            
+            const originalText = this.textContent;
+            this.textContent = 'Copied!';
+            setTimeout(() => {
+                this.textContent = originalText;
+            }, 1500);
         });
     }
 }
@@ -398,7 +465,282 @@ function initPasswordTools() {
     if (document.getElementById('generate-password')) {
         document.getElementById('generate-password').addEventListener('click', function() {
             const length = parseInt(document.getElementById('password-length').value);
-            const
+            const includeUppercase = document.getElementById('include-uppercase').checked;
+            const includeLowercase = document.getElementById('include-lowercase').checked;
+            const includeNumbers = document.getElementById('include-numbers').checked;
+            const includeSpecial = document.getElementById('include-special').checked;
+            
+            let charset = '';
+            if (includeUppercase) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (includeLowercase) charset += 'abcdefghijklmnopqrstuvwxyz';
+            if (includeNumbers) charset += '0123456789';
+            if (includeSpecial) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            
+            if (charset === '') {
+                alert('Please select at least one character type');
+                return;
+            }
+            
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += charset.charAt(Math.floor(Math.random() * charset.length));
+            }
+            
+            document.getElementById('generated-password').value = password;
+        });
+    }
+    
+    // Password length slider
+    if (document.getElementById('password-length')) {
+        document.getElementById('password-length').addEventListener('input', function() {
+            document.getElementById('length-value').textContent = this.value;
+        });
+    }
+    
+    // Copy password button
+    if (document.getElementById('copy-password')) {
+        document.getElementById('copy-password').addEventListener('click', function() {
+            const password = document.getElementById('generated-password').value;
+            copyToClipboard(password);
+            
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 1500);
+        });
+    }
+    
+    // Password strength checker
+    if (document.getElementById('password-to-check')) {
+        document.getElementById('password-to-check').addEventListener('input', function() {
+            const password = this.value;
+            const strengthBar = document.getElementById('strength-bar');
+            const strengthText = document.getElementById('strength-text');
+            const strengthSuggestions = document.getElementById('strength-suggestions');
+            
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+                strengthText.textContent = 'Password strength will appear here';
+                strengthSuggestions.innerHTML = '';
+                return;
+            }
+            
+            let strength = 0;
+            const suggestions = [];
+            
+            // Check length
+            if (password.length >= 8) strength += 20;
+            else suggestions.push('Use at least 8 characters');
+            
+            if (password.length >= 12) strength += 10;
+            if (password.length >= 16) strength += 10;
+            
+            // Check for uppercase
+            if (/[A-Z]/.test(password)) strength += 15;
+            else suggestions.push('Add uppercase letters');
+            
+            // Check for lowercase
+            if (/[a-z]/.test(password)) strength += 15;
+            else suggestions.push('Add lowercase letters');
+            
+            // Check for numbers
+            if (/[0-9]/.test(password)) strength += 15;
+            else suggestions.push('Add numbers');
+            
+            // Check for special characters
+            if (/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password)) strength += 15;
+            else suggestions.push('Add special characters');
+            
+            strengthBar.style.width = strength + '%';
+            
+            if (strength < 40) {
+                strengthBar.style.backgroundColor = '#dc3545';
+                strengthText.textContent = 'Weak password';
+            } else if (strength < 70) {
+                strengthBar.style.backgroundColor = '#ffc107';
+                strengthText.textContent = 'Moderate password';
+            } else if (strength < 90) {
+                strengthBar.style.backgroundColor = '#28a745';
+                strengthText.textContent = 'Strong password';
+            } else {
+                strengthBar.style.backgroundColor = '#155724';
+                strengthText.textContent = 'Very strong password';
+            }
+            
+            if (suggestions.length > 0) {
+                strengthSuggestions.innerHTML = '<strong>Suggestions:</strong><ul>' + 
+                    suggestions.map(s => '<li>' + s + '</li>').join('') + 
+                    '</ul>';
+            } else {
+                strengthSuggestions.innerHTML = '';
+            }
+        });
+    }
+}
+
+// Steganography Tools
+function initSteganography() {
+    // Steganography tab switching
+    const stegoTabs = document.querySelectorAll('.stego-tab');
+    stegoTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const target = this.getAttribute('data-target');
+            
+            // Remove active class from all tabs
+            stegoTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Hide all content sections
+            document.querySelectorAll('.stego-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('active');
+            });
+            
+            // Show target content
+            const targetContent = document.getElementById(target);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+                targetContent.classList.add('active');
+            }
+        });
+    });
+    
+    // Steganography action switching (encode/decode)
+    const stegoActions = document.querySelectorAll('.stego-action');
+    stegoActions.forEach(action => {
+        action.addEventListener('click', function() {
+            const actionType = this.getAttribute('data-action');
+            
+            // Remove active class from all actions
+            stegoActions.forEach(a => a.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Toggle encode/decode containers
+            if (actionType === 'encode') {
+                document.querySelector('.encode-container').classList.remove('hidden');
+                document.querySelector('.decode-container').classList.add('hidden');
+            } else {
+                document.querySelector('.encode-container').classList.add('hidden');
+                document.querySelector('.decode-container').classList.remove('hidden');
+            }
+        });
+    });
+    
+    // Cover image preview
+    if (document.getElementById('cover-image')) {
+        document.getElementById('cover-image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('cover-preview').src = event.target.result;
+                    document.getElementById('cover-preview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Stego image preview
+    if (document.getElementById('stego-image')) {
+        document.getElementById('stego-image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('stego-preview').src = event.target.result;
+                    document.getElementById('stego-preview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Encode button (hide message in image)
+    if (document.getElementById('encode-btn')) {
+        document.getElementById('encode-btn').addEventListener('click', function() {
+            const coverImage = document.getElementById('cover-image').files[0];
+            const message = document.getElementById('stego-message').value;
+            const password = document.getElementById('stego-password').value;
+            
+            if (!coverImage) {
+                alert('Please select a cover image');
+                return;
+            }
+            
+            if (!message) {
+                alert('Please enter a message to hide');
+                return;
+            }
+            
+            // Simple steganography implementation
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // This is a placeholder - real steganography would be more complex
+                    alert('Note: This is a demo implementation. In a real application, the message would be encoded into the image pixels using LSB steganography.');
+                    
+                    // For demo purposes, just show the original image
+                    document.getElementById('encoded-preview').src = e.target.result;
+                    document.getElementById('encoded-result').classList.remove('hidden');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(coverImage);
+        });
+    }
+    
+    // Decode button (extract message from image)
+    if (document.getElementById('decode-btn')) {
+        document.getElementById('decode-btn').addEventListener('click', function() {
+            const stegoImage = document.getElementById('stego-image').files[0];
+            const password = document.getElementById('decode-password').value;
+            
+            if (!stegoImage) {
+                alert('Please select a steganographic image');
+                return;
+            }
+            
+            // Placeholder for decode functionality
+            alert('Note: This is a demo implementation. In a real application, the hidden message would be extracted from the image pixels.');
+            document.getElementById('decoded-message').value = 'Demo: Hidden message would appear here';
+        });
+    }
+    
+    // Download encoded image
+    if (document.getElementById('download-encoded')) {
+        document.getElementById('download-encoded').addEventListener('click', function() {
+            const img = document.getElementById('encoded-preview');
+            const link = document.createElement('a');
+            link.download = 'stego-image.png';
+            link.href = img.src;
+            link.click();
+        });
+    }
+    
+    // Copy decoded message
+    if (document.getElementById('copy-decoded')) {
+        document.getElementById('copy-decoded').addEventListener('click', function() {
+            const message = document.getElementById('decoded-message').value;
+            copyToClipboard(message);
+            
+            const originalText = this.textContent;
+            this.textContent = 'Copied!';
+            setTimeout(() => {
+                this.textContent = originalText;
+            }, 1500);
+        });
+    }
+}
+
 // Enigma Machine Implementation
 class EnigmaMachine {
   constructor() {
@@ -1123,7 +1465,40 @@ class EnigmaUI {
   }
 }
 
-// Initialize the UI when the DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  const enigmaUI = new EnigmaUI();
-});
+// Initialize Enigma Machine
+function initEnigmaMachine() {
+    // Check if enigma section exists
+    if (document.getElementById('enigma-section')) {
+        // Initialize the Enigma UI
+        try {
+            const enigmaUI = new EnigmaUI();
+        } catch (e) {
+            console.log('Enigma machine initialization skipped:', e.message);
+        }
+    }
+    
+    // Enigma info tabs
+    const infoTabs = document.querySelectorAll('.info-tab');
+    infoTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const target = this.getAttribute('data-target');
+            
+            // Remove active class from all tabs
+            infoTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Hide all content sections
+            document.querySelectorAll('.info-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('active');
+            });
+            
+            // Show target content
+            const targetContent = document.getElementById(target);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+                targetContent.classList.add('active');
+            }
+        });
+    });
+}
