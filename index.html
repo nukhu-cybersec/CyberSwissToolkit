@@ -4,691 +4,1088 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CryptoSteg - Cybersecurity Toolkit</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-blue': '#0a192f',
+                        'cyber-green': '#64ffda',
+                        'cyber-red': '#ff5370',
+                        'cyber-purple': '#c792ea',
+                        'cyber-yellow': '#ffcb6b',
+                    },
+                    fontFamily: {
+                        'mono': ['JetBrains Mono', 'monospace'],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #0a192f;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #64ffda;
+            border-radius: 4px;
+        }
+        
+        /* Background animation */
+        .bg-matrix {
+            background: linear-gradient(135deg, #0a192f 0%, #172a46 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bg-matrix::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 20%, #0a192f 90%);
+            opacity: 0.8;
+        }
+        
+        .terminal-text {
+            color: #64ffda;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Tool section transitions */
+        .tool-section {
+            transition: all 0.3s ease;
+        }
+        
+        /* Animated border */
+        .cyber-border {
+            position: relative;
+            border: 1px solid #64ffda;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .cyber-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #64ffda, transparent);
+            animation: borderFlow 3s linear infinite;
+        }
+        
+        @keyframes borderFlow {
+            from { left: -100%; }
+            to { left: 100%; }
+        }
+
+        /* Enigma machine specific styles */
+        .rotor {
+            transition: transform 0.3s ease;
+        }
+        
+        .rotor:hover {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white min-h-screen">
+<body class="bg-matrix text-gray-100 font-mono min-h-screen">
     <div class="container mx-auto px-4 py-8">
-        <header class="text-center mb-10">
-            <h1 class="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 inline-block">CryptoSteg</h1>
-            <p class="text-xl mt-2 text-gray-300">Comprehensive Cybersecurity Toolkit</p>
-            <div class="mt-4 bg-black bg-opacity-40 rounded-lg p-2 inline-block">
-                <span id="current-time" class="font-mono text-green-400"></span>
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="flex justify-between items-center">
+                <h1 class="text-4xl font-bold text-cyber-green flex items-center">
+                    <i class="fas fa-shield-alt mr-4"></i>CryptoSteg
+                </h1>
+                <div class="terminal-text text-sm">
+                    <div id="current-time"></div>
+                    <div>User: nukhu-cybersec</div>
+                </div>
             </div>
+            <p class="text-cyber-purple mt-2">Advanced Cybersecurity & Cryptography Toolkit</p>
         </header>
-
-        <!-- Navigation Tabs -->
-        <div class="flex flex-wrap justify-center mb-6 bg-black bg-opacity-30 rounded-xl p-2">
-            <button class="tab-btn active" data-tab="steganography">Steganography</button>
-            <button class="tab-btn" data-tab="ciphers">Ciphers</button>
-            <button class="tab-btn" data-tab="hashing">Hashing</button>
-            <button class="tab-btn" data-tab="password">Password Tools</button>
-            <button class="tab-btn" data-tab="enigma">Enigma Machine</button>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="tab-content">
-            <!-- Steganography Section -->
-            <div id="steganography" class="tab-pane active">
-                <div class="glass-panel">
-                    <h2 class="section-title">Image Steganography</h2>
-                    <p class="text-gray-300 mb-6">Hide secret messages within images that appear normal to others.</p>
+        
+        <!-- Main content area -->
+        <div class="flex flex-col md:flex-row gap-6">
+            <!-- Navigation sidebar -->
+            <nav class="w-full md:w-1/4 cyber-border bg-cyber-blue/80 p-4">
+                <h2 class="text-cyber-green text-xl mb-4 font-bold"><i class="fas fa-list-ul mr-2"></i>Tools</h2>
+                <ul class="space-y-2">
+                    <li>
+                        <button class="tool-btn w-full text-left p-2 rounded-md hover:bg-cyber-green/20 hover:text-cyber-green flex justify-between items-center" data-target="cipher-section">
+                            <span><i class="fas fa-key mr-2"></i>Ciphers</span>
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="tool-btn w-full text-left p-2 rounded-md hover:bg-cyber-green/20 hover:text-cyber-green flex justify-between items-center" data-target="hash-section">
+                            <span><i class="fas fa-hashtag mr-2"></i>Hashing</span>
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="tool-btn w-full text-left p-2 rounded-md hover:bg-cyber-green/20 hover:text-cyber-green flex justify-between items-center" data-target="password-section">
+                            <span><i class="fas fa-lock mr-2"></i>Password Tools</span>
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="tool-btn w-full text-left p-2 rounded-md hover:bg-cyber-green/20 hover:text-cyber-green flex justify-between items-center" data-target="steg-section">
+                            <span><i class="fas fa-image mr-2"></i>Steganography</span>
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="tool-btn w-full text-left p-2 rounded-md hover:bg-cyber-green/20 hover:text-cyber-green flex justify-between items-center" data-target="encoding-section">
+                            <span><i class="fas fa-exchange-alt mr-2"></i>Encoders/Decoders</span>
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="tool-btn w-full text-left p-2 rounded-md hover:bg-cyber-green/20 hover:text-cyber-green flex justify-between items-center" data-target="enigma-section">
+                            <span><i class="fas fa-cogs mr-2"></i>Enigma Machine</span>
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="tool-btn w-full text-left p-2 rounded-md hover:bg-cyber-green/20 hover:text-cyber-green flex justify-between items-center" data-target="network-section">
+                            <span><i class="fas fa-network-wired mr-2"></i>Network Tools</span>
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Tool content area -->
+            <main class="w-full md:w-3/4 cyber-border bg-cyber-blue/80 p-6">
+                <!-- Welcome section (default view) -->
+                <section id="welcome-section" class="tool-section active">
+                    <h2 class="text-2xl font-bold text-cyber-green mb-4"><i class="fas fa-terminal mr-2"></i>Welcome to CryptoSteg</h2>
+                    <div class="cyber-border p-4 mb-6">
+                        <p class="mb-3">This toolkit provides various cybersecurity tools for educational purposes. Select a tool category from the navigation panel to begin.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                            <div class="bg-cyber-blue/50 p-4 rounded-md border border-cyber-green/30">
+                                <i class="fas fa-shield-alt text-cyber-green text-2xl mb-2"></i>
+                                <h3 class="text-cyber-yellow">Security Analysis</h3>
+                                <p class="text-sm text-gray-300">Tools for analyzing security posture and vulnerabilities.</p>
+                            </div>
+                            <div class="bg-cyber-blue/50 p-4 rounded-md border border-cyber-green/30">
+                                <i class="fas fa-key text-cyber-green text-2xl mb-2"></i>
+                                <h3 class="text-cyber-yellow">Encryption</h3>
+                                <p class="text-sm text-gray-300">Various encryption algorithms for data protection.</p>
+                            </div>
+                            <div class="bg-cyber-blue/50 p-4 rounded-md border border-cyber-green/30">
+                                <i class="fas fa-eye-slash text-cyber-green text-2xl mb-2"></i>
+                                <h3 class="text-cyber-yellow">Steganography</h3>
+                                <p class="text-sm text-gray-300">Hide data within other data for covert communication.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-400 italic">
+                        <p>Note: These tools are intended for educational purposes. Always use responsibly and legally.</p>
+                    </div>
+                </section>
+                
+                <!-- Ciphers Section -->
+                <section id="cipher-section" class="tool-section hidden">
+                    <h2 class="text-2xl font-bold text-cyber-green mb-4"><i class="fas fa-key mr-2"></i>Cipher Tools</h2>
                     
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Encode Message -->
-                        <div class="bg-black bg-opacity-40 rounded-xl p-6 border border-purple-500/30">
-                            <h3 class="text-xl text-cyan-400 mb-4">Encode Message</h3>
-                            
-                            <div class="mb-4">
-                                <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Secret Message</label>
-                                <textarea id="message" class="w-full h-24 bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Enter your secret message here..."></textarea>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="encode-password" class="block text-sm font-medium text-gray-300 mb-1">Password (Optional)</label>
-                                <input type="password" id="encode-password" class="w-full bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Password for extra security">
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-300 mb-1">Upload Image</label>
-                                <div class="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center hover:border-purple-500 transition cursor-pointer" id="image-upload-area">
-                                    <img id="preview-image-encode" class="max-h-40 mx-auto hidden mb-3">
-                                    <p id="upload-prompt" class="text-gray-400">Drop image here or click to browse</p>
-                                    <input type="file" id="image-input" accept="image/*" class="hidden">
-                                </div>
-                            </div>
-                            
-                            <button id="encode-button" class="cyber-button w-full disabled:opacity-50" disabled>
-                                Encode Message
-                            </button>
+                    <div class="mb-6 cyber-border p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <button class="cipher-select-btn bg-cyber-blue hover:bg-cyber-green/30 border border-cyber-green/50 p-2 rounded" data-cipher="caesar">Caesar Cipher</button>
+                            <button class="cipher-select-btn bg-cyber-blue hover:bg-cyber-green/30 border border-cyber-green/50 p-2 rounded" data-cipher="vigenere">Vigenère Cipher</button>
+                            <button class="cipher-select-btn bg-cyber-blue hover:bg-cyber-green/30 border border-cyber-green/50 p-2 rounded" data-cipher="substitution">Substitution Cipher</button>
                         </div>
                         
-                        <!-- Decode Message -->
-                        <div class="bg-black bg-opacity-40 rounded-xl p-6 border border-purple-500/30">
-                            <h3 class="text-xl text-cyan-400 mb-4">Decode Message</h3>
-                            
+                        <!-- Caesar Cipher Tool -->
+                        <div id="caesar-tool" class="cipher-tool">
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-300 mb-1">Upload Encoded Image</label>
-                                <div class="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center hover:border-purple-500 transition cursor-pointer" id="decode-upload-area">
-                                    <img id="preview-image-decode" class="max-h-40 mx-auto hidden mb-3">
-                                    <p id="decode-upload-prompt" class="text-gray-400">Drop encoded image here or click to browse</p>
-                                    <input type="file" id="decode-image-input" accept="image/*" class="hidden">
-                                </div>
+                                <label class="block text-cyber-green mb-2">Shift Value (1-25):</label>
+                                <input type="number" id="caesar-shift" min="1" max="25" value="3" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full text-white">
                             </div>
-                            
                             <div class="mb-4">
-                                <label for="decode-password" class="block text-sm font-medium text-gray-300 mb-1">Password (If required)</label>
-                                <input type="password" id="decode-password" class="w-full bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Enter password if needed">
+                                <label class="block text-cyber-green mb-2">Input Text:</label>
+                                <textarea id="caesar-input" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full h-24 text-white" placeholder="Enter text to encrypt/decrypt"></textarea>
                             </div>
-                            
-                            <button id="decode-button" class="cyber-button w-full disabled:opacity-50" disabled>
-                                Decode Message
-                            </button>
-                            
-                            <div class="mt-4 bg-gray-800 rounded-md p-3 hidden" id="decoded-message-container">
-                                <label class="block text-sm font-medium text-gray-300 mb-1">Decoded Message:</label>
-                                <div id="decoded-message" class="font-mono text-green-400 break-words"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ciphers Section -->
-            <div id="ciphers" class="tab-pane">
-                <div class="glass-panel">
-                    <h2 class="section-title">Ciphers</h2>
-                    <p class="text-gray-300 mb-6">Encrypt and decrypt messages using various classical ciphers.</p>
-                    
-                    <div class="mb-6">
-                        <label for="cipher-type" class="block text-sm font-medium text-gray-300 mb-2">Select Cipher</label>
-                        <select id="cipher-type" class="w-full md:w-1/3 bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                            <option value="caesar">Caesar Cipher</option>
-                            <option value="vigenere">Vigenère Cipher</option>
-                            <option value="atbash">Atbash Cipher</option>
-                            <option value="rot13">ROT13</option>
-                            <option value="substitution">Substitution Cipher</option>
-                        </select>
-                    </div>
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Left column -->
-                        <div>
-                            <div id="cipher-key-container" class="mb-4">
-                                <label for="cipher-key" class="block text-sm font-medium text-gray-300 mb-1">Key</label>
-                                <input type="text" id="cipher-key" class="w-full bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Enter cipher key">
-                            </div>
-                            
-                            <div id="shift-amount-container" class="mb-4">
-                                <label for="shift-amount" class="block text-sm font-medium text-gray-300 mb-1">Shift Amount</label>
-                                <input type="number" id="shift-amount" class="w-full bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" value="3" min="1" max="25">
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="cipher-input" class="block text-sm font-medium text-gray-300 mb-1">Plain Text</label>
-                                <textarea id="cipher-input" class="w-full h-32 bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Enter text to encrypt/decrypt"></textarea>
-                            </div>
-                        </div>
-                        
-                        <!-- Right column -->
-                        <div>
-                            <div class="mb-4">
-                                <div class="flex space-x-2 mb-4">
-                                    <button id="encrypt-button" class="cyber-button flex-1">Encrypt</button>
-                                    <button id="decrypt-button" class="cyber-button flex-1">Decrypt</button>
-                                </div>
-                                
-                                <label for="cipher-output" class="block text-sm font-medium text-gray-300 mb-1">Result</label>
-                                <textarea id="cipher-output" class="w-full h-32 bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Result will appear here" readonly></textarea>
-                            </div>
-                            
-                            <div class="flex justify-end mt-2 space-x-2">
-                                <button id="copy-cipher-output" class="cyber-button-sm">
-                                    Copy
-                                </button>
-                                <button id="clear-cipher" class="cyber-button-sm">
-                                    Clear
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 bg-black bg-opacity-30 rounded-lg p-4 text-sm">
-                        <h4 class="text-cyan-400 mb-2">Cipher Info</h4>
-                        <p id="cipher-info" class="text-gray-300">
-                            The Caesar cipher is a simple substitution cipher where each letter in the plaintext is shifted a certain number of places down the alphabet. The shift amount is the key.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hashing Section -->
-            <div id="hashing" class="tab-pane">
-                <div class="glass-panel">
-                    <h2 class="section-title">Hashing Tools</h2>
-                    <p class="text-gray-300 mb-6">Generate cryptographic hashes for text or files.</p>
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Text Hashing -->
-                        <div class="bg-black bg-opacity-40 rounded-xl p-6 border border-purple-500/30">
-                            <h3 class="text-xl text-cyan-400 mb-4">Text Hashing</h3>
-                            
-                            <div class="mb-4">
-                                <label for="hash-text" class="block text-sm font-medium text-gray-300 mb-1">Input Text</label>
-                                <textarea id="hash-text" class="w-full h-32 bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Enter text to hash"></textarea>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="hash-algorithm" class="block text-sm font-medium text-gray-300 mb-1">Hash Algorithm</label>
-                                <select id="hash-algorithm" class="w-full bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                                    <option value="md5">MD5</option>
-                                    <option value="sha1">SHA-1</option>
-                                    <option value="sha256" selected>SHA-256</option>
-                                    <option value="sha512">SHA-512</option>
-                                </select>
-                            </div>
-                            
-                            <button id="hash-button" class="cyber-button w-full">
-                                Generate Hash
-                            </button>
-                            
-                            <div class="mt-4">
-                                <label for="hash-output" class="block text-sm font-medium text-gray-300 mb-1">Hash Result</label>
-                                <div class="relative">
-                                    <input type="text" id="hash-output" class="w-full font-mono text-sm bg-gray-800 border-gray-700 rounded-md p-2 pr-10 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Hash will appear here" readonly>
-                                    <button id="copy-hash" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-purple-500 hover:text-purple-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
-                                            <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 010 2h-2v-2z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- File Hashing -->
-                        <div class="bg-black bg-opacity-40 rounded-xl p-6 border border-purple-500/30">
-                            <h3 class="text-xl text-cyan-400 mb-4">File Hashing</h3>
-                            
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-300 mb-1">Upload File</label>
-                                <div class="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center hover:border-purple-500 transition cursor-pointer" id="file-upload-area">
-                                    <p id="file-upload-prompt" class="text-gray-400">Drop file here or click to browse</p>
-                                    <p id="file-name" class="text-purple-400 mt-1 hidden"></p>
-                                    <input type="file" id="file-input" class="hidden">
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="file-hash-algorithm" class="block text-sm font-medium text-gray-300 mb-1">Hash Algorithm</label>
-                                <select id="file-hash-algorithm" class="w-full bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                                    <option value="md5">MD5</option>
-                                    <option value="sha1">SHA-1</option>
-                                    <option value="sha256" selected>SHA-256</option>
-                                    <option value="sha512">SHA-512</option>
-                                </select>
-                            </div>
-                            
-                            <button id="file-hash-button" class="cyber-button w-full disabled:opacity-50" disabled>
-                                Generate File Hash
-                            </button>
-                            
-                            <div class="mt-4">
-                                <label for="file-hash-output" class="block text-sm font-medium text-gray-300 mb-1">File Hash</label>
-                                <div class="relative">
-                                    <input type="text" id="file-hash-output" class="w-full font-mono text-sm bg-gray-800 border-gray-700 rounded-md p-2 pr-10 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="File hash will appear here" readonly>
-                                    <button id="copy-file-hash" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-purple-500 hover:text-purple-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
-                                            <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 010 2h-2v-2z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Hash Comparison -->
-                    <div class="mt-6 bg-black bg-opacity-40 rounded-xl p-6 border border-purple-500/30">
-                        <h3 class="text-xl text-cyan-400 mb-4">Hash Verification</h3>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="hash-1" class="block text-sm font-medium text-gray-300 mb-1">Hash 1</label>
-                                <input type="text" id="hash-1" class="w-full font-mono text-sm bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Enter first hash">
+                            <div class="flex space-x-3 mb-4">
+                                <button id="caesar-encrypt" class="bg-cyber-green/20 hover:bg-cyber-green/40 text-cyber-green border border-cyber-green p-2 rounded flex-1">Encrypt</button>
+                                <button id="caesar-decrypt" class="bg-cyber-purple/20 hover:bg-cyber-purple/40 text-cyber-purple border border-cyber-purple p-2 rounded flex-1">Decrypt</button>
                             </div>
                             <div>
-                                <label for="hash-2" class="block text-sm font-medium text-gray-300 mb-1">Hash 2</label>
-                                <input type="text" id="hash-2" class="w-full font-mono text-sm bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Enter second hash">
+                                <label class="block text-cyber-green mb-2">Result:</label>
+                                <div id="caesar-output" class="bg-cyber-blue/80 border border-cyber-green/50 p-2 rounded min-h-[60px] font-mono"></div>
                             </div>
                         </div>
+                        
+                        <!-- Vigenère Cipher Tool -->
+                        <div id="vigenere-tool" class="cipher-tool hidden">
+                            <div class="mb-4">
+                                <label class="block text-cyber-green mb-2">Key:</label>
+                                <input type="text" id="vigenere-key" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full text-white" placeholder="Enter encryption key">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-cyber-green mb-2">Input Text:</label>
+                                <textarea id="vigenere-input" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full h-24 text-white" placeholder="Enter text to encrypt/decrypt"></textarea>
+                            </div>
+                            <div class="flex space-x-3 mb-4">
+                                <button id="vigenere-encrypt" class="bg-cyber-green/20 hover:bg-cyber-green/40 text-cyber-green border border-cyber-green p-2 rounded flex-1">Encrypt</button>
+                                <button id="vigenere-decrypt" class="bg-cyber-purple/20 hover:bg-cyber-purple/40 text-cyber-purple border border-cyber-purple p-2 rounded flex-1">Decrypt</button>
+                            </div>
+                            <div>
+                                <label class="block text-cyber-green mb-2">Result:</label>
+                                <div id="vigenere-output" class="bg-cyber-blue/80 border border-cyber-green/50 p-2 rounded min-h-[60px] font-mono"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Substitution Cipher Tool -->
+                        <div id="substitution-tool" class="cipher-tool hidden">
+                            <div class="mb-4">
+                                <label class="block text-cyber-green mb-2">Substitution Alphabet:</label>
+                                <input type="text" id="substitution-key" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full text-white" placeholder="Enter 26 letter substitution alphabet" maxlength="26">
+                                <p class="text-xs text-gray-400 mt-1">Enter all 26 letters of the alphabet in your desired order for substitution.</p>
+                            </div>
+                            <div class="mb-4">
+                                <button id="generate-random-key" class="bg-cyber-yellow/20 hover:bg-cyber-yellow/30 text-cyber-yellow border border-cyber-yellow/70 p-1 rounded text-sm">Generate Random Key</button>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-cyber-green mb-2">Input Text:</label>
+                                <textarea id="substitution-input" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full h-24 text-white" placeholder="Enter text to encrypt/decrypt"></textarea>
+                            </div>
+                            <div class="flex space-x-3 mb-4">
+                                <button id="substitution-encrypt" class="bg-cyber-green/20 hover:bg-cyber-green/40 text-cyber-green border border-cyber-green p-2 rounded flex-1">Encrypt</button>
+                                <button id="substitution-decrypt" class="bg-cyber-purple/20 hover:bg-cyber-purple/40 text-cyber-purple border border-cyber-purple p-2 rounded flex-1">Decrypt</button>
+                            </div>
+                            <div>
+                                <label class="block text-cyber-green mb-2">Result:</label>
+                                <div id="substitution-output" class="bg-cyber-blue/80 border border-cyber-green/50 p-2 rounded min-h-[60px] font-mono"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Hashing Section -->
+                <section id="hash-section" class="tool-section hidden">
+                    <h2 class="text-2xl font-bold text-cyber-green mb-4"><i class="fas fa-hashtag mr-2"></i>Hash Generator</h2>
+                    
+                    <div class="cyber-border p-4 mb-6">
+                        <div class="mb-4">
+                            <label class="block text-cyber-green mb-2">Input Text:</label>
+                            <textarea id="hash-input" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full h-24 text-white" placeholder="Enter text to hash"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                            <button class="hash-btn bg-cyber-blue hover:bg-cyber-green/30 border border-cyber-green/50 p-2 rounded" data-hash="md5">MD5</button>
+                            <button class="hash-btn bg-cyber-blue hover:bg-cyber-green/30 border border-cyber-green/50 p-2 rounded" data-hash="sha1">SHA-1</button>
+                            <button class="hash-btn bg-cyber-blue hover:bg-cyber-green/30 border border-cyber-green/50 p-2 rounded" data-hash="sha256">SHA-256</button>
+                            <button class="hash-btn bg-cyber-blue hover:bg-cyber-green/30 border border-cyber-green/50 p-2 rounded" data-hash="sha512">SHA-512</button>
+                            <button class="hash-btn bg-cyber-blue hover:bg-cyber-green/30 border border-cyber-green/50 p-2 rounded" data-hash="ripemd160">RIPEMD-160</button>
+                            <button class="hash-btn bg-cyber-blue hover:bg-cyber-green/30 border border-cyber-green/50 p-2 rounded" data-hash="all">All Hashes</button>
+                        </div>
+                        <div>
+                            <label class="block text-cyber-green mb-2">Hash Result:</label>
+                            <div id="hash-output" class="bg-cyber-blue/80 border border-cyber-green/50 p-2 rounded min-h-[60px] font-mono overflow-x-auto"></div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold text-cyber-green mb-4"><i class="fas fa-check-circle mr-2"></i>Hash Verifier</h2>
+                    <div class="cyber-border p-4">
+                        <div class="mb-4">
+                            <label class="block text-cyber-green mb-2">Original Text:</label>
+                            <textarea id="verify-input" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full h-16 text-white" placeholder="Enter original text"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-cyber-green mb-2">Hash to Verify:</label>
+                            <input type="text" id="verify-hash" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full text-white" placeholder="Enter hash to verify">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-cyber-green mb-2">Hash Algorithm:</label>
+                            <select id="verify-algorithm" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full text-white">
+                                <option value="md5">MD5</option>
+                                <option value="sha1">SHA-1</option>
+                                <option value="sha256">SHA-256</option>
+                                <option value="sha512">SHA-512</option>
+                                <option value="ripemd160">RIPEMD-160</option>
+                            </select>
+                        </div>
+                        <button id="verify-btn" class="bg-cyber-green/20 hover:bg-cyber-green/40 text-cyber-green border border-cyber-green p-2 rounded w-full">Verify Hash</button>
                         <div class="mt-4">
-                            <button id="compare-hashes" class="cyber-button w-full md:w-auto">
-                                Compare Hashes
-                            </button>
-                            <div id="hash-comparison-result" class="mt-3 text-center hidden"></div>
+                            <div id="verify-result" class="p-2 rounded text-center hidden"></div>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Password Tools Section -->
-            <div id="password" class="tab-pane">
-                <div class="glass-panel">
-                    <h2 class="section-title">Password Tools</h2>
-                    <p class="text-gray-300 mb-6">Generate secure passwords and analyze password strength.</p>
+                </section>
+                
+                <!-- Password Tools Section -->
+                <section id="password-section" class="tool-section hidden">
+                    <h2 class="text-2xl font-bold text-cyber-green mb-4"><i class="fas fa-lock mr-2"></i>Password Tools</h2>
                     
-                    <div class="grid md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Password Generator -->
-                        <div class="bg-black bg-opacity-40 rounded-xl p-6 border border-purple-500/30">
-                            <h3 class="text-xl text-cyan-400 mb-4">Password Generator</h3>
-                            
-                            <div class="mb-4">
-                                <label for="password-length" class="block text-sm font-medium text-gray-300 mb-1">Password Length</label>
-                                <div class="flex items-center space-x-3">
-                                    <input type="range" id="password-length" min="8" max="64" value="16" class="w-full">
-                                    <span id="length-value" class="text-purple-400 font-mono">16</span>
+                        <div class="cyber-border p-4">
+                            <h3 class="text-xl font-bold text-cyber-yellow mb-3">Password Generator</h3>
+                            <div class="mb-3">
+                                <label class="block text-cyber-green mb-2">Password Length:</label>
+                                <input type="range" id="password-length" min="8" max="64" value="16" class="w-full">
+                                <div class="flex justify-between text-xs text-gray-400">
+                                    <span>8</span>
+                                    <span id="length-value">16</span>
+                                    <span>64</span>
                                 </div>
                             </div>
-                            
-                            <div class="mb-4 grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" class="form-checkbox bg-gray-800 text-purple-500" id="include-uppercase" checked>
-                                        <span class="ml-2 text-gray-300">Uppercase (A-Z)</span>
-                                    </label>
+                            <div class="mb-3 space-y-2">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="include-uppercase" class="mr-2" checked>
+                                    <label for="include-uppercase" class="text-cyber-green">Include Uppercase Letters</label>
                                 </div>
-                                <div>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" class="form-checkbox bg-gray-800 text-purple-500" id="include-lowercase" checked>
-                                        <span class="ml-2 text-gray-300">Lowercase (a-z)</span>
-                                    </label>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="include-lowercase" class="mr-2" checked>
+                                    <label for="include-lowercase" class="text-cyber-green">Include Lowercase Letters</label>
                                 </div>
-                                <div>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" class="form-checkbox bg-gray-800 text-purple-500" id="include-numbers" checked>
-                                        <span class="ml-2 text-gray-300">Numbers (0-9)</span>
-                                    </label>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="include-numbers" class="mr-2" checked>
+                                    <label for="include-numbers" class="text-cyber-green">Include Numbers</label>
                                 </div>
-                                <div>
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" class="form-checkbox bg-gray-800 text-purple-500" id="include-symbols" checked>
-                                        <span class="ml-2 text-gray-300">Symbols (!@#$)</span>
-                                    </label>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="include-symbols" class="mr-2" checked>
+                                    <label for="include-symbols" class="text-cyber-green">Include Symbols</label>
                                 </div>
                             </div>
-                            
-                            <div class="mb-4">
-                                <label for="exclude-similar" class="inline-flex items-center">
-                                    <input type="checkbox" class="form-checkbox bg-gray-800 text-purple-500" id="exclude-similar">
-                                    <span class="ml-2 text-gray-300">Exclude similar characters (i, l, 1, L, o, 0, O)</span>
-                                </label>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="exclude-ambiguous" class="inline-flex items-center">
-                                    <input type="checkbox" class="form-checkbox bg-gray-800 text-purple-500" id="exclude-ambiguous">
-                                    <span class="ml-2 text-gray-300">Exclude ambiguous symbols ({ } [ ] ( ) / \ ' " ` ~)</span>
-                                </label>
-                            </div>
-                            
-                            <button id="generate-password" class="cyber-button w-full">
-                                Generate Password
-                            </button>
-                            
-                            <div class="mt-4">
-                                <label for="generated-password" class="block text-sm font-medium text-gray-300 mb-1">Generated Password</label>
-                                <div class="relative">
-                                    <input type="text" id="generated-password" class="w-full font-mono bg-gray-800 border-gray-700 rounded-md p-2 pr-24 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" readonly>
-                                    <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
-                                        <button id="toggle-password-visibility" class="text-purple-500 hover:text-purple-400">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                                            </svg>
-                                        </button>
-                                        <button id="copy-password" class="text-purple-500 hover:text-purple-400">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
-                                                <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 010 2h-2v-2z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
+                            <button id="generate-password" class="bg-cyber-green/20 hover:bg-cyber-green/40 text-cyber-green border border-cyber-green p-2 rounded w-full mb-3">Generate Password</button>
+                            <div class="relative">
+                                <input type="text" id="generated-password" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full text-white" readonly>
+                                <button id="copy-password" class="absolute right-2 top-2 text-cyber-green" title="Copy to clipboard">
+                                    <i class="far fa-copy"></i>
+                                </button>
                             </div>
                         </div>
                         
-                        <!-- Password Strength Analyzer -->
-                        <div class="bg-black bg-opacity-40 rounded-xl p-6 border border-purple-500/30">
-                            <h3 class="text-xl text-cyan-400 mb-4">Password Strength Analyzer</h3>
-                            
-                            <div class="mb-4">
-                                <label for="password-to-analyze" class="block text-sm font-medium text-gray-300 mb-1">Enter Password</label>
-                                <div class="relative">
-                                    <input type="password" id="password-to-analyze" class="w-full bg-gray-800 border-gray-700 rounded-md p-2 pr-10 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Enter a password to analyze">
-                                    <button id="toggle-analyze-visibility" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-purple-500 hover:text-purple-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
+                        <!-- Password Strength Checker -->
+                        <div class="cyber-border p-4">
+                            <h3 class="text-xl font-bold text-cyber-yellow mb-3">Password Strength Checker</h3>
+                            <div class="mb-3">
+                                <label class="block text-cyber-green mb-2">Enter Password:</label>
+                                <input type="text" id="check-password" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full text-white">
+                            </div>
+                            <button id="check-strength" class="bg-cyber-purple/20 hover:bg-cyber-purple/40 text-cyber-purple border border-cyber-purple p-2 rounded w-full mb-3">Check Strength</button>
+                            <div class="mb-3">
+                                <div class="w-full bg-gray-700 rounded-full h-2.5">
+                                    <div id="strength-meter" class="h-2.5 rounded-full" style="width: 0%"></div>
                                 </div>
+                                <p id="strength-text" class="text-center mt-2 font-bold"></p>
                             </div>
-                            
-                            <button id="analyze-password" class="cyber-button w-full">
-                                Analyze Strength
-                            </button>
-                            
-                            <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-300 mb-1">Strength</label>
-                                <div class="w-full bg-gray-800 rounded-full h-4">
-                                    <div id="strength-meter" class="h-4 rounded-full bg-red-500" style="width: 0%"></div>
-                                </div>
-                                <div class="flex justify-between text-xs mt-1">
-                                    <span>Weak</span>
-                                    <span>Medium</span>
-                                    <span>Strong</span>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-4 text-sm">
-                                <label class="block text-sm font-medium text-gray-300 mb-1">Analysis</label>
-                                <ul id="password-analysis" class="list-disc pl-5 space-y-1 text-gray-300">
-                                    <li>Password will be analyzed here</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-300 mb-1">Estimated Crack Time</label>
-                                <div id="crack-time" class="font-mono text-purple-400">-</div>
-                            </div>
+                            <div id="strength-details" class="text-sm space-y-1 border-t border-gray-700 pt-2 mt-2"></div>
                         </div>
                     </div>
+                </section>
+
+                <!-- Enigma Machine Section -->
+                <section id="enigma-section" class="tool-section hidden">
+                    <h2 class="text-2xl font-bold text-cyber-green mb-4"><i class="fas fa-cogs mr-2"></i>Interactive Enigma Machine</h2>
                     
-                    <!-- Password Manager Tips -->
-                    <div class="mt-6 bg-black bg-opacity-30 rounded-lg p-4 text-sm">
-                        <h4 class="text-cyan-400 mb-2">Password Security Tips</h4>
-                        <ul class="list-disc pl-5 space-y-1 text-gray-300">
-                            <li>Use a unique password for each account</li>
-                            <li>Passwords should be at least 12 characters long</li>
-                            <li>Include a mix of uppercase, lowercase, numbers, and symbols</li>
-                            <li>Consider using a password manager to store complex passwords</li>
-                            <li>Enable two-factor authentication when available</li>
-                            <li>Avoid using personal information in your passwords</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Enigma Machine Section -->
-            <div id="enigma" class="tab-pane">
-                <div class="glass-panel">
-                    <h2 class="section-title">Enigma Machine Simulator</h2>
-                    <p class="text-gray-300 mb-6">Interactive simulation of the World War II encryption device.</p>
-                    
-                    <div class="grid lg:grid-cols-3 gap-6">
-                        <!-- Enigma Configuration -->
-                        <div class="bg-black bg-opacity-40 rounded-xl p-6 border border-purple-500/30 lg:col-span-1">
-                            <h3 class="text-xl text-cyan-400 mb-4">Machine Configuration</h3>
-                            
-                            <!-- Rotor selection -->
-                            <div class="mb-6">
-                                <h4 class="text-sm font-medium text-gray-300 mb-2">Rotors</h4>
-                                
-                                <div class="mb-3">
-                                    <label class="block text-xs text-gray-400 mb-1">Left Rotor</label>
-                                    <div class="flex items-center">
-                                        <select id="rotor-1-type" class="bg-gray-800 border-gray-700 rounded-l-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
+                    <div class="cyber-border p-4 mb-6">
+                        <div class="text-cyber-purple mb-4 text-sm">
+                            <p>This is a simulation of the WWII Enigma encryption device. Configure the rotors and plugboard, then type your message to see real-time encryption.</p>
+                        </div>
+                        
+                        <!-- Rotor Configuration -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-bold text-cyber-yellow mb-3">Rotor Configuration</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <!-- Rotor I -->
+                                <div class="cyber-border p-3">
+                                    <h4 class="text-center text-cyber-green mb-2">Rotor I</h4>
+                                    <div class="flex justify-center items-center">
+                                        <button class="text-cyber-green px-2 text-xl rotate-180">▼</button>
+                                        <div class="rotor bg-cyber-blue/70 border border-cyber-green mx-2 w-12 h-16 flex items-center justify-center text-2xl font-bold">
+                                            <span id="rotor1-position">A</span>
+                                        </div>
+                                        <button class="text-cyber-green px-2 text-xl">▼</button>
+                                    </div>
+                                    <div class="mt-3">
+                                        <label class="block text-cyber-green mb-1 text-xs">Rotor Type:</label>
+                                        <select id="rotor1-type" class="bg-cyber-blue/50 border border-cyber-green/50 p-1 rounded w-full text-white text-sm">
                                             <option value="I">I</option>
                                             <option value="II">II</option>
-                                            <option value="III" selected>III</option>
+                                            <option value="III">III</option>
                                             <option value="IV">IV</option>
                                             <option value="V">V</option>
                                         </select>
-                                        <select id="rotor-1-position" class="bg-gray-800 border-gray-700 border-l border-r p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                                            <!-- A-Z options will be added via JS -->
-                                        </select>
-                                        <select id="rotor-1-ring" class="bg-gray-800 border-gray-700 rounded-r-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                                            <!-- 1-26 options will be added via JS -->
-                                        </select>
                                     </div>
                                 </div>
                                 
-                                <div class="mb-3">
-                                    <label class="block text-xs text-gray-400 mb-1">Middle Rotor</label>
-                                    <div class="flex items-center">
-                                        <select id="rotor-2-type" class="bg-gray-800 border-gray-700 rounded-l-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
+                                <!-- Rotor II -->
+                                <div class="cyber-border p-3">
+                                    <h4 class="text-center text-cyber-green mb-2">Rotor II</h4>
+                                    <div class="flex justify-center items-center">
+                                        <button class="text-cyber-green px-2 text-xl rotate-180">▼</button>
+                                        <div class="rotor bg-cyber-blue/70 border border-cyber-green mx-2 w-12 h-16 flex items-center justify-center text-2xl font-bold">
+                                            <span id="rotor2-position">A</span>
+                                        </div>
+                                        <button class="text-cyber-green px-2 text-xl">▼</button>
+                                    </div>
+                                    <div class="mt-3">
+                                        <label class="block text-cyber-green mb-1 text-xs">Rotor Type:</label>
+                                        <select id="rotor2-type" class="bg-cyber-blue/50 border border-cyber-green/50 p-1 rounded w-full text-white text-sm">
                                             <option value="I">I</option>
                                             <option value="II" selected>II</option>
                                             <option value="III">III</option>
                                             <option value="IV">IV</option>
                                             <option value="V">V</option>
                                         </select>
-                                        <select id="rotor-2-position" class="bg-gray-800 border-gray-700 border-l border-r p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                                            <!-- A-Z options will be added via JS -->
-                                        </select>
-                                        <select id="rotor-2-ring" class="bg-gray-800 border-gray-700 rounded-r-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                                            <!-- 1-26 options will be added via JS -->
-                                        </select>
                                     </div>
                                 </div>
                                 
-                                <div class="mb-3">
-                                    <label class="block text-xs text-gray-400 mb-1">Right Rotor</label>
-                                    <div class="flex items-center">
-                                        <select id="rotor-3-type" class="bg-gray-800 border-gray-700 rounded-l-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                                            <option value="I" selected>I</option>
+                                <!-- Rotor III -->
+                                <div class="cyber-border p-3">
+                                    <h4 class="text-center text-cyber-green mb-2">Rotor III</h4>
+                                    <div class="flex justify-center items-center">
+                                        <button class="text-cyber-green px-2 text-xl rotate-180">▼</button>
+                                        <div class="rotor bg-cyber-blue/70 border border-cyber-green mx-2 w-12 h-16 flex items-center justify-center text-2xl font-bold">
+                                            <span id="rotor3-position">A</span>
+                                        </div>
+                                        <button class="text-cyber-green px-2 text-xl">▼</button>
+                                    </div>
+                                    <div class="mt-3">
+                                        <label class="block text-cyber-green mb-1 text-xs">Rotor Type:</label>
+                                        <select id="rotor3-type" class="bg-cyber-blue/50 border border-cyber-green/50 p-1 rounded w-full text-white text-sm">
+                                            <option value="I">I</option>
                                             <option value="II">II</option>
-                                            <option value="III">III</option>
+                                            <option value="III" selected>III</option>
                                             <option value="IV">IV</option>
                                             <option value="V">V</option>
                                         </select>
-                                        <select id="rotor-3-position" class="bg-gray-800 border-gray-700 border-l border-r p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                                            <!-- A-Z options will be added via JS -->
-                                        </select>
-                                        <select id="rotor-3-ring" class="bg-gray-800 border-gray-700 rounded-r-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                                            <!-- 1-26 options will be added via JS -->
-                                        </select>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Reflector selection -->
-                            <div class="mb-6">
-                                <label for="reflector" class="block text-sm font-medium text-gray-300 mb-1">Reflector</label>
-                                <select id="reflector" class="w-full bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white">
-                                    <option value="B">B</option>
-                                    <option value="C">C</option>
+                            <div class="mt-4">
+                                <label class="block text-cyber-green mb-1">Reflector:</label>
+                                <select id="reflector-type" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full md:w-1/3 text-white">
+                                    <option value="B">UKW-B (Standard)</option>
+                                    <option value="C">UKW-C</option>
                                 </select>
-                            </div>
-                            
-                            <!-- Plugboard -->
-                            <div class="mb-4">
-                                <label for="plugboard" class="block text-sm font-medium text-gray-300 mb-1">Plugboard</label>
-                                <input type="text" id="plugboard" class="w-full bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="AB CD EF (pairs of letters)">
-                            </div>
-                            <p class="text-xs text-gray-400 mb-6">Enter up to 10 pairs of letters separated by spaces (e.g., AB CD EF)</p>
-                            
-                            <div class="mb-4">
-                                <button id="random-settings" class="cyber-button w-full">
-                                    Randomize Settings
-                                </button>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="enigma-settings" class="block text-sm font-medium text-gray-300 mb-1">Settings String</label>
-                                <div class="relative">
-                                    <input type="text" id="enigma-settings" class="w-full font-mono text-sm bg-gray-800 border-gray-700 rounded-md p-2 pr-10 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" readonly>
-                                    <button id="copy-settings" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-purple-500 hover:text-purple-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
-                                            <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 010 2h-2v-2z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="load-settings" class="block text-sm font-medium text-gray-300 mb-1">Load Settings</label>
-                                <div class="flex">
-                                    <input type="text" id="load-settings-input" class="flex-1 bg-gray-800 border-gray-700 rounded-l-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white" placeholder="Paste settings string">
-                                    <button id="load-settings-btn" class="bg-purple-600 hover:bg-purple-700 px-4 rounded-r-md">Load</button>
-                                </div>
                             </div>
                         </div>
                         
-                        <!-- Enigma Machine -->
-                        <div class="lg:col-span-2">
-                            <!-- Virtual Enigma Machine Display -->
-                            <div class="bg-black bg-opacity-60 rounded-xl p-6 border border-purple-500/30 mb-6 enigma-machine">
-                                <!-- Rotor display -->
-                                <div class="flex justify-center mb-8">
-                                    <div class="rotor-display">
-                                        <div class="rotor-label">I</div>
-                                        <div id="rotor-1-display" class="rotor-wheel">A</div>
-                                    </div>
-                                    <div class="rotor-display">
-                                        <div class="rotor-label">II</div>
-                                        <div id="rotor-2-display" class="rotor-wheel">A</div>
-                                    </div>
-                                    <div class="rotor-display">
-                                        <div class="rotor-label">III</div>
-                                        <div id="rotor-3-display" class="rotor-wheel">A</div>
-                                    </div>
+                        <!-- Plugboard Configuration -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-bold text-cyber-yellow mb-3">Plugboard</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3">
+                                <div class="cyber-border p-2">
+                                    <input type="text" maxlength="2" placeholder="AB" class="plugboard-pair bg-cyber-blue/50 border border-cyber-purple/50 p-1 rounded w-full text-center text-white uppercase">
                                 </div>
-                                
-                                <!-- Lampboard -->
-                                <div class="lampboard mb-8">
-                                    <div class="grid grid-cols-9 gap-1 md:gap-2 mb-1 md:mb-2">
-                                        <div class="lamp" data-key="Q">Q</div>
-                                        <div class="lamp" data-key="W">W</div>
-                                        <div class="lamp" data-key="E">E</div>
-                                        <div class="lamp" data-key="R">R</div>
-                                        <div class="lamp" data-key="T">T</div>
-                                        <div class="lamp" data-key="Y">Y</div>
-                                        <div class="lamp" data-key="U">U</div>
-                                        <div class="lamp" data-key="I">I</div>
-                                        <div class="lamp" data-key="O">O</div>
-                                    </div>
-                                    <div class="grid grid-cols-9 gap-1 md:gap-2 mb-1 md:mb-2">
-                                        <div class="lamp" data-key="A">A</div>
-                                        <div class="lamp" data-key="S">S</div>
-                                        <div class="lamp" data-key="D">D</div>
-                                        <div class="lamp" data-key="F">F</div>
-                                        <div class="lamp" data-key="G">G</div>
-                                        <div class="lamp" data-key="H">H</div>
-                                        <div class="lamp" data-key="J">J</div>
-                                        <div class="lamp" data-key="K">K</div>
-                                        <div class="lamp" data-key="L">L</div>
-                                    </div>
-                                    <div class="grid grid-cols-9 gap-1 md:gap-2">
-                                        <div class="lamp" data-key="P">P</div>
-                                        <div class="lamp" data-key="Z">Z</div>
-                                        <div class="lamp" data-key="X">X</div>
-                                        <div class="lamp" data-key="C">C</div>
-                                        <div class="lamp" data-key="V">V</div>
-                                        <div class="lamp" data-key="B">B</div>
-                                        <div class="lamp" data-key="N">N</div>
-                                        <div class="lamp" data-key="M">M</div>
-                                        <div class="lamp empty"></div>
-                                    </div>
+                                <div class="cyber-border p-2">
+                                    <input type="text" maxlength="2" placeholder="CD" class="plugboard-pair bg-cyber-blue/50 border border-cyber-purple/50 p-1 rounded w-full text-center text-white uppercase">
                                 </div>
-                                
-                                <!-- Keyboard -->
-                                <div class="keyboard">
-                                    <div class="grid grid-cols-9 gap-1 md:gap-2 mb-1 md:mb-2">
-                                        <button class="key" data-key="Q">Q</button>
-                                        <button class="key" data-key="W">W</button>
-                                        <button class="key" data-key="E">E</button>
-                                        <button class="key" data-key="R">R</button>
-                                        <button class="key" data-key="T">T</button>
-                                        <button class="key" data-key="Y">Y</button>
-                                        <button class="key" data-key="U">U</button>
-                                        <button class="key" data-key="I">I</button>
-                                        <button class="key" data-key="O">O</button>
-                                    </div>
-                                    <div class="grid grid-cols-9 gap-1 md:gap-2 mb-1 md:mb-2">
-                                        <button class="key" data-key="A">A</button>
-                                        <button class="key" data-key="S">S</button>
-                                        <button class="key" data-key="D">D</button>
-                                        <button class="key" data-key="F">F</button>
-                                        <button class="key" data-key="G">G</button>
-                                        <button class="key" data-key="H">H</button>
-                                        <button class="key" data-key="J">J</button>
-                                        <button class="key" data-key="K">K</button>
-                                        <button class="key" data-key="L">L</button>
-                                    </div>
-                                    <div class="grid grid-cols-9 gap-1 md:gap-2">
-                                        <button class="key" data-key="P">P</button>
-                                        <button class="key" data-key="Z">Z</button>
-                                        <button class="key" data-key="X">X</button>
-                                        <button class="key" data-key="C">C</button>
-                                        <button class="key" data-key="V">V</button>
-                                        <button class="key" data-key="B">B</button>
-                                        <button class="key" data-key="N">N</button>
-                                        <button class="key" data-key="M">M</button>
-                                        <button class="key empty"></button>
-                                    </div>
+                                <div class="cyber-border p-2">
+                                    <input type="text" maxlength="2" placeholder="EF" class="plugboard-pair bg-cyber-blue/50 border border-cyber-purple/50 p-1 rounded w-full text-center text-white uppercase">
+                                </div>
+                                <div class="cyber-border p-2">
+                                    <input type="text" maxlength="2" placeholder="GH" class="plugboard-pair bg-cyber-blue/50 border border-cyber-purple/50 p-1 rounded w-full text-center text-white uppercase">
+                                </div>
+                                <div class="cyber-border p-2">
+                                    <input type="text" maxlength="2" placeholder="IJ" class="plugboard-pair bg-cyber-blue/50 border border-cyber-purple/50 p-1 rounded w-full text-center text-white uppercase">
                                 </div>
                             </div>
+                            <p class="text-xs text-gray-400">Enter pairs of letters to be swapped (e.g., AB will swap A and B)</p>
+                        </div>
+                        
+                        <!-- Enigma I/O -->
+                        <div>
+                            <h3 class="text-xl font-bold text-cyber-yellow mb-3">Enigma Input/Output</h3>
+                            <div class="mb-4">
+                                <label class="block text-cyber-green mb-2">Input Text:</label>
+                                <textarea id="enigma-input" class="bg-cyber-blue/50 border border-cyber-green/50 p-2 rounded w-full h-24 text-white" placeholder="Enter text to encrypt"></textarea>
+                            </div>
                             
-                            <!-- Text input/output -->
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div class="bg-black bg-opacity-40 rounded-xl p-6 border border-purple-500/30">
-                                    <h3 class="text-xl text-cyan-400 mb-4">Input</h3>
-                                    
-                                    <div class="mb-4">
-                                        <textarea id="enigma-input" class="w-full h-32 bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white uppercase" placeholder="Enter text to encrypt/decrypt (letters only)"></textarea>
-                                    </div>
-                                    
-                                    <button id="process-enigma" class="cyber-button w-full">
-                                        Process Text
-                                    </button>
-                                    
-                                    <div class="mt-2 text-xs text-gray-400">
-                                        <p>Type on your keyboard or use the virtual keyboard above.</p>
-                                    </div>
+                            <!-- Visual keyboard -->
+                            <div class="mb-4 enigma-keyboard text-center">
+                                <div class="grid grid-cols-9 gap-1 mb-1">
+                                    <div class="key-light" data-key="Q">Q</div>
+                                    <div class="key-light" data-key="W">W</div>
+                                    <div class="key-light" data-key="E">E</div>
+                                    <div class="key-light" data-key="R">R</div>
+                                    <div class="key-light" data-key="T">T</div>
+                                    <div class="key-light" data-key="Z">Z</div>
+                                    <div class="key-light" data-key="U">U</div>
+                                    <div class="key-light" data-key="I">I</div>
+                                    <div class="key-light" data-key="O">O</div>
                                 </div>
-                                
-                                <div class="bg-black bg-opacity-40 rounded-xl p-6 border border-purple-500/30">
-                                    <h3 class="text-xl text-cyan-400 mb-4">Output</h3>
-                                    
-                                    <div class="mb-4">
-                                        <textarea id="enigma-output" class="w-full h-32 bg-gray-800 border-gray-700 rounded-md p-2 focus:border-purple-500 focus:ring focus:ring-purple-500/20 transition text-white font-mono" placeholder="Output will appear here" readonly></textarea>
-                                    </div>
-                                    
-                                    <div class="flex space-x-2">
-                                        <button id="copy-enigma-output" class="cyber-button flex-1">
-                                            Copy Output
-                                        </button>
-                                        <button id="reset-enigma" class="cyber-button flex-1">
-                                            Reset All
-                                        </button>
-                                    </div>
+                                <div class="grid grid-cols-9 gap-1 mb-1">
+                                    <div class="key-light" data-key="A">A</div>
+                                    <div class="key-light" data-key="S">S</div>
+                                    <div class="key-light" data-key="D">D</div>
+                                    <div class="key-light" data-key="F">F</div>
+                                    <div class="key-light" data-key="G">G</div>
+                                    <div class="key-light" data-key="H">H</div>
+                                    <div class="key-light" data-key="J">J</div>
+                                    <div class="key-light" data-key="K">K</div>
+                                    <div class="key-light" data-key="P">P</div>
                                 </div>
+                                <div class="grid grid-cols-8 gap-1">
+                                    <div class="key-light" data-key="Y">Y</div>
+                                    <div class="key-light" data-key="X">X</div>
+                                    <div class="key-light" data-key="C">C</div>
+                                    <div class="key-light" data-key="V">V</div>
+                                    <div class="key-light" data-key="B">B</div>
+                                    <div class="key-light" data-key="N">N</div>
+                                    <div class="key-light" data-key="M">M</div>
+                                    <div class="key-light" data-key="L">L</div>
+                                </div>
+                                <style>
+                                    .key-light {
+                                        @apply bg-cyber-blue border border-cyber-green/40 p-2 rounded cursor-pointer hover:bg-cyber-green/20 transition-all;
+                                    }
+                                    .key-active {
+                                        @apply bg-cyber-yellow/30 border-cyber-yellow text-cyber-yellow;
+                                    }
+                                </style>
+                            </div>
+                            
+                            <button id="enigma-encrypt" class="bg-cyber-green/20 hover:bg-cyber-green/40 text-cyber-green border border-cyber-green p-2 rounded w-full mb-4">Process Through Enigma</button>
+                            
+                            <div>
+                                <label class="block text-cyber-green mb-2">Output:</label>
+                                <div id="enigma-output" class="bg-cyber-blue/80 border border-cyber-green/50 p-2 rounded min-h-[60px] font-mono break-all"></div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-6 bg-black bg-opacity-30 rounded-lg p-4 text-sm">
-                        <h4 class="text-cyan-400 mb-2">About the Enigma Machine</h4>
-                        <p class="text-gray-300 mb-2">
-                            The Enigma machine was used by Nazi Germany during World War II to encrypt sensitive military communications. 
-                            It used a system of rotors that would change with each keystroke, creating an encryption that was extremely difficult to break at the time.
-                        </p>
-                        <p class="text-gray-300">
-                            British codebreakers at Bletchley Park, including Alan Turing, developed techniques and machines to decrypt Enigma messages, 
-                            which significantly contributed to the Allied victory.
-                        </p>
-                    </div>
-                </div>
-            </div>
+                </section>
+            </main>
         </div>
         
-        <footer class="text-center text-gray-400 mt-10 text-sm">
-            <p>CryptoSteg v1.0 | Developed by <span class="text-purple-400">nukhu-cybersec</span> | Current date: <span id="current-date"></span></p>
+        <footer class="mt-8 text-center text-gray-400 text-sm">
+            <p>CryptoSteg | Created for educational purposes</p>
+            <p class="text-xs mt-1">User: nukhu-cybersec | © 2025</p>
         </footer>
     </div>
     
-    <script src="script.js"></script>
-</body>
-</html>
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const formatted = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('current-time').innerText = `Time: ${formatted}`;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // Tool navigation
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetSection = btn.getAttribute('data-target');
+                
+                // Hide all sections
+                document.querySelectorAll('.tool-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                
+                // Show target section
+                document.getElementById(targetSection).classList.remove('hidden');
+            });
+        });
+        
+        // Cipher tools navigation
+        document.querySelectorAll('.cipher-select-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const cipherType = btn.getAttribute('data-cipher');
+                
+                // Hide all cipher tools
+                document.querySelectorAll('.cipher-tool').forEach(tool => {
+                    tool.classList.add('hidden');
+                });
+                
+                // Show selected cipher tool
+                document.getElementById(`${cipherType}-tool`).classList.remove('hidden');
+                
+                // Update active button styling
+                document.querySelectorAll('.cipher-select-btn').forEach(b => {
+                    b.classList.remove('bg-cyber-green/30');
+                    b.classList.add('bg-cyber-blue');
+                });
+                btn.classList.remove('bg-cyber-blue');
+                btn.classList.add('bg-cyber-green/30');
+            });
+        });
+        
+        // Caesar cipher functionality
+        document.getElementById('caesar-encrypt').addEventListener('click', () => {
+            const input = document.getElementById('caesar-input').value;
+            const shift = parseInt(document.getElementById('caesar-shift').value);
+            
+            if (!input) {
+                alert('Please enter text to encrypt');
+                return;
+            }
+            
+            const result = caesarCipher(input, shift);
+            document.getElementById('caesar-output').innerText = result;
+        });
+        
+        document.getElementById('caesar-decrypt').addEventListener('click', () => {
+            const input = document.getElementById('caesar-input').value;
+            const shift = parseInt(document.getElementById('caesar-shift').value);
+            
+            if (!input) {
+                alert('Please enter text to decrypt');
+                return;
+            }
+            
+            const result = caesarCipher(input, 26 - shift);
+            document.getElementById('caesar-output').innerText = result;
+        });
+        
+        function caesarCipher(text, shift) {
+            return text.split('').map(char => {
+                if (char.match(/[a-z]/i)) {
+                    const code = char.charCodeAt(0);
+                    // Uppercase letters
+                    if (code >= 65 && code <= 90) {
+                        return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+                    }
+                    // Lowercase letters
+                    else if (code >= 97 && code <= 122) {
+                        return String.fromCharCode(((code - 97 + shift) % 26) + 97);
+                    }
+                }
+                return char;
+            }).join('');
+        }
+        
+        // Vigenère cipher functionality
+        document.getElementById('vigenere-encrypt').addEventListener('click', () => {
+            const input = document.getElementById('vigenere-input').value;
+            const key = document.getElementById('vigenere-key').value;
+            
+            if (!input || !key) {
+                alert('Please enter both text and key');
+                return;
+            }
+            
+            const result = vigenereCipher(input, key, true);
+            document.getElementById('vigenere-output').innerText = result;
+        });
+        
+        document.getElementById('vigenere-decrypt').addEventListener('click', () => {
+            const input = document.getElementById('vigenere-input').value;
+            const key = document.getElementById('vigenere-key').value;
+            
+            if (!input || !key) {
+                alert('Please enter both text and key');
+                return;
+            }
+            
+            const result = vigenereCipher(input, key, false);
+            document.getElementById('vigenere-output').innerText = result;
+        });
+        
+        function vigenereCipher(text, key, encrypt) {
+            // Filter out non-alphabetic characters from the key
+            const cleanKey = key.replace(/[^a-z]/gi, '').toUpperCase();
+            if (cleanKey.length === 0) {
+                alert('Key must contain at least one letter');
+                return text;
+            }
+            
+            return text.split('').map((char, i) => {
+                if (char.match(/[a-z]/i)) {
+                    const isUpperCase = char === char.toUpperCase();
+                    const plainChar = char.toUpperCase();
+                    const plainCode = plainChar.charCodeAt(0) - 65;
+                    
+                    // Get key character (repeating the key as needed)
+                    const keyChar = cleanKey[i % cleanKey.length];
+                    const keyCode = keyChar.charCodeAt(0) - 65;
+                    
+                    // Encrypt or decrypt
+                    let resultCode;
+                    if (encrypt) {
+                        resultCode = (plainCode + keyCode) % 26;
+                    } else {
+                        resultCode = (plainCode - keyCode + 26) % 26;
+                    }
+                    
+                    const resultChar = String.fromCharCode(resultCode + 65);
+                    return isUpperCase ? resultChar : resultChar.toLowerCase();
+                }
+                return char;
+            }).join('');
+        }
+        
+        // Substitution cipher functionality
+        document.getElementById('generate-random-key').addEventListener('click', () => {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const shuffled = alphabet.split('').sort(() => 0.5 - Math.random()).join('');
+            document.getElementById('substitution-key').value = shuffled;
+        });
+        
+        document.getElementById('substitution-encrypt').addEventListener('click', () => {
+            const input = document.getElementById('substitution-input').value;
+            const key = document.getElementById('substitution-key').value.toUpperCase();
+            
+            if (!input) {
+                alert('Please enter text to encrypt');
+                return;
+            }
+            
+            if (key.length !== 26 || !isValidSubstitutionKey(key)) {
+                alert('Please enter a valid 26-letter substitution alphabet');
+                return;
+            }
+            
+            const result = substitutionCipher(input, key, true);
+            document.getElementById('substitution-output').innerText = result;
+        });
+        
+        document.getElementById('substitution-decrypt').addEventListener('click', () => {
+            const input = document.getElementById('substitution-input').value;
+            const key = document.getElementById('substitution-key').value.toUpperCase();
+            
+            if (!input) {
+                alert('Please enter text to decrypt');
+                return;
+            }
+            
+            if (key.length !== 26 || !isValidSubstitutionKey(key)) {
+                alert('Please enter a valid 26-letter substitution alphabet');
+                return;
+            }
+            
+            const result = substitutionCipher(input, key, false);
+            document.getElementById('substitution-output').innerText = result;
+        });
+        
+        function isValidSubstitutionKey(key) {
+            // Check if key has exactly one occurrence of each letter A-Z
+            const letterCounts = {};
+            for (const char of key) {
+                if (!char.match(/[A-Z]/)) return false;
+                letterCounts[char] = (letterCounts[char] || 0) + 1;
+                if (letterCounts[char] > 1) return false;
+            }
+            return Object.keys(letterCounts).length === 26;
+        }
+        
+        function substitutionCipher(text, key, encrypt) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            
+            return text.split('').map(char => {
+                if (char.match(/[a-z]/i)) {
+                    const isUpperCase = char === char.toUpperCase();
+                    const plainChar = char.toUpperCase();
+                    
+                    let resultChar;
+                    if (encrypt) {
+                        // For encryption: find position in standard alphabet, map to key
+                        const pos = alphabet.indexOf(plainChar);
+                        resultChar = key[pos];
+                    } else {
+                        // For decryption: find position in key, map to standard alphabet
+                        const pos = key.indexOf(plainChar);
+                        resultChar = alphabet[pos];
+                    }
+                    
+                    return isUpperCase ? resultChar : resultChar.toLowerCase();
+                }
+                return char;
+            }).join('');
+        }
+        
+        // Hash functionality
+        document.querySelectorAll('.hash-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const hashType = btn.getAttribute('data-hash');
+                const input = document.getElementById('hash-input').value;
+                
+                if (!input) {
+                    alert('Please enter text to hash');
+                    return;
+                }
+                
+                // This is a mock-up - in a real implementation, you'd use actual cryptographic libraries
+                // For example, with the crypto-js library
+                let result = '';
+                
+                if (hashType === 'all') {
+                    result = `MD5: ${mockHash(input, 'md5')}\n`;
+                    result += `SHA-1: ${mockHash(input, 'sha1')}\n`;
+                    result += `SHA-256: ${mockHash(input, 'sha256')}\n`;
+                    result += `SHA-512: ${mockHash(input, 'sha512')}\n`;
+                    result += `RIPEMD-160: ${mockHash(input, 'ripemd160')}`;
+                } else {
+                    result = mockHash(input, hashType);
+                }
+                
+                document.getElementById('hash-output').innerText = result;
+            });
+        });
+        
+        // Mock hash function (would be replaced with actual cryptographic hashing in real implementation)
+        function mockHash(input, algorithm) {
+            // For demonstration only - creates predictable but realistic looking hashes
+            // In production, use proper cryptographic libraries
+            let base = input + algorithm;
+            let hash = '';
+            
+            // Create different length outputs for different algorithms
+            let length = 32; // MD5 length
+            if (algorithm === 'sha1') length = 40;
+            if (algorithm === 'sha256') length = 64;
+            if (algorithm === 'sha512') length = 128;
+            if (algorithm === 'ripemd160') length = 40;
+            
+            for (let i = 0; i < length; i++) {
+                const charCode = (base.charCodeAt(i % base.length) + i) % 16;
+                hash += charCode.toString(16);
+            }
+            
+            return hash;
+        }
+        
+        // Password generator
+        document.getElementById('password-length').addEventListener('input', function() {
+            document.getElementById('length-value').textContent = this.value;
+        });
+        
+        document.getElementById('generate-password').addEventListener('click', () => {
+            const length = parseInt(document.getElementById('password-length').value);
+            const includeUppercase = document.getElementById('include-uppercase').checked;
+            const includeLowercase = document.getElementById('include-lowercase').checked;
+            const includeNumbers = document.getElementById('include-numbers').checked;
+            const includeSymbols = document.getElementById('include-symbols').checked;
+            
+            if (!includeUppercase && !includeLowercase && !includeNumbers && !includeSymbols) {
+                alert('Please select at least one character type');
+                return;
+            }
+            
+            const password = generatePassword(length, includeUppercase, includeLowercase, includeNumbers, includeSymbols);
+            document.getElementById('generated-password').value = password;
+        });
+        
+        document.getElementById('copy-password').addEventListener('click', () => {
+            const passwordField = document.getElementById('generated-password');
+            passwordField.select();
+            document.execCommand('copy');
+            
+            const button = document.getElementById('copy-password');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+            }, 1500);
+        });
+        
+        function generatePassword(length, upper, lower, numbers, symbols) {
+            let chars = '';
+            if (upper) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (lower) chars += 'abcdefghijklmnopqrstuvwxyz';
+            if (numbers) chars += '0123456789';
+            if (symbols) chars += '!@#$%^&*()_+[]{}|;:,.<>?';
+            
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * chars.length);
+                password += chars[randomIndex];
+            }
+            return password;
+        }
+        
+        // Password strength checker
+        document.getElementById('check-strength').addEventListener('click', () => {
+            const password = document.getElementById('check-password').value;
+            
+            if (!password) {
+                alert('Please enter a password to check');
+                return;
+            }
+            
+            const strength = checkPasswordStrength(password);
+            
+            const meter = document.getElementById('strength-meter');
+            const strengthText = document.getElementById('strength-text');
+            const strengthDetails = document.getElementById('strength-details');
+            
+            // Update meter color and width
+            meter.style.width = `${strength.score * 25}%`;
+            
+            if (strength.score <= 1) {
+                meter.className = 'h-2.5 rounded-full bg-cyber-red';
+                strengthText.className = 'text-center mt-2 font-bold text-cyber-red';
+                strengthText.textContent = 'Very Weak';
+            } else if (strength.score === 2) {
+                meter.className = 'h-2.5 rounded-full bg-cyber-yellow';
+                strengthText.className = 'text-center mt-2 font-bold text-cyber-yellow';
+                strengthText.textContent = 'Weak';
+            } else if (strength.score === 3) {
+                meter.className = 'h-2.5 rounded-full bg-cyber-green';
+                strengthText.className = 'text-center mt-2 font-bold text-cyber-green';
+                strengthText.textContent = 'Good';
+            } else {
+                meter.className = 'h-2.5 rounded-full bg-cyber-green';
+                strengthText.className = 'text-center mt-2 font-bold text-cyber-green';
+                strengthText.textContent = 'Strong';
+            }
+            
+            // Display strength details
+            strengthDetails.innerHTML = '';
+            strength.feedback.forEach(item => {
+                const p = document.createElement('p');
+                p.textContent = item;
+                p.className = 'flex items-center';
+                const icon = document.createElement('i');
+                
+                if (item.includes('✓')) {
+                    icon.className = 'fas fa-check text-cyber-green mr-2';
+                } else {
+                    icon.className = 'fas fa-times text-cyber-red mr-2';
+                }
+                
+                p.prepend(icon);
+                strengthDetails.appendChild(p);
+            });
+        });
+        
+        function checkPasswordStrength(password) {
+            let score = 0;
+            const feedback = [];
+            
+            // Length check
+            if (password.length < 8) {
+                feedback.push('✗ Password should be at least 8 characters long');
+            } else {
+                score++;
+                feedback.push('✓ Good length');
+            }
+            
+            // Complexity checks
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumbers = /[0-9]/.test(password);
+            const hasSymbols = /[^A-Za-z0-9]/.test(password);
+            
+            let complexityScore = 0;
+            if (hasUppercase) complexityScore++;
+            if (hasLowercase) complexityScore++;
+            if (hasNumbers) complexityScore++;
+            if (hasSymbols) complexityScore++;
+            
+            if (complexityScore >= 3) score++;
+            
+            if (!hasUppercase) feedback.push('✗ Add uppercase letters');
+            if (!hasLowercase) feedback.push('✗ Add lowercase letters');
+            if (!hasNumbers) feedback.push('✗ Add numbers');
+            if (!hasSymbols) feedback.push('✗ Add symbols');
+            
+            // Check for repeating characters
+            if (/(.)\1\1/.test(password)) {
+                feedback.push('✗ Avoid repeating characters');
+            } else {
+                score++;
+                feedback.push('✓ No repeating characters');
+            }
+            
+            // Check for sequential characters
+            if (/(?:abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|012|123|234|345|456|567|678|789)/i.test(password)) {
+                feedback.push('✗ Avoid sequential characters');
+            } else {
+                score++;
+                feedback.push('✓ No sequential characters');
+            }
+            
+            // Bonus for length > 12
+            if (password.length > 12) {
+                score++;
+                feedback.push('✓ Extra length bonus');
+            }
+            
+            return {
+                score: Math.min(4, score),
+                feedback
+            };
+        }
+        
+        // Enigma machine simulation
+        // This is a simplified version for demonstration purposes
+        // A full implementation would require more complex logic
+        
+        let activeRotorPositions = {
+            rotor1: 'A',
+            rotor2: 'A',
+            rotor3: 'A'
+        };
+        
+        // Set up rotor position controls
+        const rotorControls = [1, 2, 3].map(num => {
+            const upBtn = document.querySelector(`#rotor${num}-position`).previousElementSibling;
+            const downBtn = document.querySelector(`#rotor${num}-position`).nextElementSibling;
+            
+            upBtn.addEventListener('click', () => {
+                const currentPos = activeRotorPositions[`rotor${num}`];
+                const nextPos = String.fromCharCode(((currentPos.charCodeAt(0) - 65 + 1) % 26) + 65);
+                activeRotorPositions[`rotor${num}`] = nextPos;
+                document.querySelector(`#rotor${num}-position`).textContent = nextPos;
+            });
+            
+            downBtn.addEventListener('click', () => {
+                const currentPos = activeRotorPositions[`rotor${num}`];
+                const prevPos = String.fromCharCode(((currentPos.charCodeAt(0) - 65 - 1 + 26) % 26) + 65);
+                activeRotorPositions[`rotor${num}`] = prevPos;
+                document.querySelector(`#rotor${num}-position`).textContent = prevPos;
+            });
+        });
+        
+        // Enigma encryption button
+        document.getElementById('enigma-encrypt').addEventListener('click', () => {
+            const input = document.getElementById('enigma-input').value.toUpperCase().replace(/[^A-Z]/g, '');
+            
+            if (!input) {
+                alert('Please enter text to process');
+                return;
+            }
+            
+            // Get rotor types and starting positions
+            const rotorTypes = {
+                rotor1: document.getElementById('rotor1-type').value,
+                rotor2: document.getElementById('rotor2-type').value,
+                rotor3: document.getElementById('rotor3-type').value
+            };
+            
+            const reflector = document.getElementById('reflector-type').value;
+            
+            // Get plugboard pairs
+            const plugboardPairs = Array.from(document.querySelectorAll('.plugboard-pair'))
+                .map(input => input.value.toUpperCase())
+                .filter(val => val.length === 2 && /^[A-Z]{2}$/.test(val));
+            
+            // Process text through enigma simulation
+            let result = '';
+            for (let i = 0; i < input.length; i++) {
+                // Simple enigma simulation - in a real implementation, this would be much more complex
+                // with actual rotor wiring, stepping mechanism, etc.
+                
+                // Advance the rotors
+                advanceRotors();
+                
+                // Encrypt the character
+                let char = input[i];
+                
+                // Apply plugboard (first pass)
+                char = applyPlugboard(char, plugboardPairs);
+                
+                // Pass through rotors forward
+                char = simulateRotorForward(char, rotorTypes.rotor3, activeRotorPositions.rotor3);
+                char = simulateRotorForward(char, rotorTypes.rotor2, activeRotorPositions.rotor2);
+                char = simulateRotorForward(char, rotorTypes.rotor1, activeRotorPositions.ro
