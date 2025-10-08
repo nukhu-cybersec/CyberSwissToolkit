@@ -115,6 +115,155 @@ function initNavigationAndTabs() {
     });
 }
 
+// Helper function for copying to clipboard
+function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text);
+    } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+        } catch (error) {
+            console.error('Failed to copy:', error);
+        }
+        textArea.remove();
+    }
+}
+
+// Cipher Helper Functions
+function caesarCipher(text, shift) {
+    let result = '';
+    for (let i = 0; i < text.length; i++) {
+        let char = text[i];
+        if (char.match(/[a-z]/i)) {
+            const code = text.charCodeAt(i);
+            // Uppercase letters
+            if (code >= 65 && code <= 90) {
+                char = String.fromCharCode(((code - 65 + shift) % 26) + 65);
+            }
+            // Lowercase letters
+            else if (code >= 97 && code <= 122) {
+                char = String.fromCharCode(((code - 97 + shift) % 26) + 97);
+            }
+        }
+        result += char;
+    }
+    return result;
+}
+
+function vigenereCipher(text, key, encrypt) {
+    if (!key) return text;
+    key = key.toUpperCase();
+    let result = '';
+    let keyIndex = 0;
+    
+    for (let i = 0; i < text.length; i++) {
+        let char = text[i];
+        if (char.match(/[a-z]/i)) {
+            const code = text.charCodeAt(i);
+            const keyShift = key.charCodeAt(keyIndex % key.length) - 65;
+            const shift = encrypt ? keyShift : -keyShift;
+            
+            // Uppercase letters
+            if (code >= 65 && code <= 90) {
+                char = String.fromCharCode(((code - 65 + shift + 26) % 26) + 65);
+            }
+            // Lowercase letters
+            else if (code >= 97 && code <= 122) {
+                char = String.fromCharCode(((code - 97 + shift + 26) % 26) + 97);
+            }
+            keyIndex++;
+        }
+        result += char;
+    }
+    return result;
+}
+
+function atbashCipher(text) {
+    let result = '';
+    for (let i = 0; i < text.length; i++) {
+        let char = text[i];
+        const code = text.charCodeAt(i);
+        
+        // Uppercase letters
+        if (code >= 65 && code <= 90) {
+            char = String.fromCharCode(90 - (code - 65));
+        }
+        // Lowercase letters
+        else if (code >= 97 && code <= 122) {
+            char = String.fromCharCode(122 - (code - 97));
+        }
+        result += char;
+    }
+    return result;
+}
+
+function railFenceEncrypt(text, rails) {
+    if (rails < 2) return text;
+    
+    const fence = Array(rails).fill().map(() => []);
+    let rail = 0;
+    let direction = 1;
+    
+    for (let char of text) {
+        fence[rail].push(char);
+        rail += direction;
+        
+        if (rail === 0 || rail === rails - 1) {
+            direction = -direction;
+        }
+    }
+    
+    return fence.flat().join('');
+}
+
+function railFenceDecrypt(cipher, rails) {
+    if (rails < 2) return cipher;
+    
+    const fence = Array(rails).fill().map(() => []);
+    const positions = [];
+    let rail = 0;
+    let direction = 1;
+    
+    for (let i = 0; i < cipher.length; i++) {
+        positions.push(rail);
+        rail += direction;
+        if (rail === 0 || rail === rails - 1) {
+            direction = -direction;
+        }
+    }
+    
+    let index = 0;
+    for (let r = 0; r < rails; r++) {
+        for (let i = 0; i < positions.length; i++) {
+            if (positions[i] === r) {
+                fence[r].push(cipher[index++]);
+            }
+        }
+    }
+    
+    let result = '';
+    rail = 0;
+    direction = 1;
+    const pointers = Array(rails).fill(0);
+    
+    for (let i = 0; i < cipher.length; i++) {
+        result += fence[rail][pointers[rail]++];
+        rail += direction;
+        if (rail === 0 || rail === rails - 1) {
+            direction = -direction;
+        }
+    }
+    
+    return result;
+}
+
 // Classical Cipher Tools
 function initCipherTools() {
     // Cipher method selector - show/hide options based on selected cipher
