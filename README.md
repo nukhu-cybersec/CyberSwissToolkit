@@ -1,111 +1,39 @@
-# CryptoSteg - Cybersecurity Toolkit
+# CryptoSteg
 
-CryptoSteg is a comprehensive web-based cybersecurity toolkit designed for educational purposes. It combines steganography capabilities with other essential cryptographic and security tools, providing a seamless interface for students and cybersecurity enthusiasts to experiment with various security techniques.
+CryptoSteg is a comprehensive web-based cybersecurity toolkit designed for college students studying cybersecurity, cryptography, and steganography. It provides a collection of interactive tools for encryption, decryption, hashing, and various security-related operations.
 
 ## Features
 
-### Image Steganography
-Hide secret messages within images without visible detection. CryptoSteg allows you to:
-- Encode text messages into image files
-- Extract hidden messages from steganographic images
-- Add password protection to your hidden messages for enhanced security
-
-### Advanced Cipher Tools
-Experiment with both classical and modern encryption techniques:
-- Caesar Cipher (with customizable shift)
-- Vigenère Cipher
-- Simple Substitution Cipher
-- AES Encryption (industry-standard symmetric encryption)
-- Cipher analysis tools, including frequency analysis and brute force attempts
-
-### Cryptographic Hashing
-Generate and verify secure hashes:
-- Support for multiple algorithms: MD5, SHA-1, SHA-256, SHA-512, RIPEMD-160
-- Hash verification tool to check data integrity
-- Educational information about hash functions and their uses
-
-### Password Tools
-Enhance your password security practices:
-- Strong password generator with customizable options
-- Password strength checker with detailed feedback
-- Visual strength meter and actionable improvement suggestions
-
-### Text Encoding/Decoding
-Convert text between different encoding formats:
-- Base64 encoding/decoding
-- Hexadecimal conversion
-- Binary representation
-- URL encoding/decoding
-- HTML entity encoding/decoding
-
-## Getting Started
-
-### Prerequisites
-CryptoSteg is a browser-based application that requires:
-- A modern web browser (Chrome, Firefox, Safari, or Edge)
-- JavaScript enabled
-
-### Installation
-1. Clone the repository or download the source files:
-```
-git clone https://github.com/nukhu-cybersec/cryptosteg.git
-```
-
-2. Navigate to the project directory:
-```
-cd cryptosteg
-```
-
-3. Open `index.html` in your web browser:
-```
-# On macOS
-open index.html
-
-# On Linux
-xdg-open index.html
-
-# On Windows
-start index.html
-```
-
-Alternatively, you can set up a local server or deploy to a web hosting service.
+- **Ciphers**: Classic and modern encryption techniques including Caesar, Vigenère, Substitution, and more
+- **Hashing**: Generate and verify various hash functions (MD5, SHA-1, SHA-256, etc.)
+- **Password Tools**: Password strength analyzer, generator, and hash cracker
+- **Steganography**: Hide and extract data in images
+- **Encoders/Decoders**: Base64, URL, HTML encoding/decoding
+- **Interactive Enigma Machine**: Fully functional simulation of the WWII-era encryption device
+- **Network Tools**: Ping, traceroute, port scanning (educational purposes only)
 
 ## Usage
 
-### Steganography
-1. Select the "Steganography" tab
-2. To hide a message:
-   - Enter your secret message in the text area
-   - Optionally add a password for encryption
-   - Upload an image file (PNG or JPEG)
-   - Click "Encode Message into Image"
-   - Download the resulting image with your hidden message
+1. Select a tool category from the navigation panel
+2. Choose a specific tool from the expanded menu
+3. Enter your input data and configure tool-specific settings
+4. Click the appropriate action button (encrypt, decrypt, hash, etc.)
+5. View results in the output area
 
-3. To extract a message:
-   - Upload an image containing a hidden message
-   - Enter the password if the message was encrypted
-   - Click "Extract Hidden Message"
-   - View the decoded message in the result area
+## Technologies Used
 
-### Ciphers
-1. Select the "Ciphers" tab
-2. Choose a cipher type from the dropdown menu
-3. Enter your encryption/decryption key
-4. Type or paste your text
-5. Click "Encrypt" or "Decrypt" as needed
-6. Use the cipher analysis tools to perform frequency analysis or test multiple Caesar shifts
+- HTML5
+- CSS3 with Tailwind CSS
+- JavaScript (ES6+)
 
-### Hashing
-1. Select the "Hashing" tab
-2. Choose your preferred hashing algorithm
-3. Enter the text to hash
-4. Click "Generate Hash" to see the result
-5. Use the verification tool to check if a given text matches a specific hash
+## Educational Purpose
 
-### Password Tools
-1. Select the "Password Tools" tab
-2. Use the password generator to create strong passwords:
-   - Adjust the length slider
-   - Select character types to include
-   - Click "Generate Password"
-   - Copy the result
+This toolkit is designed for educational purposes to help cybersecurity students understand and experiment with various security concepts in a practical, hands-on environment.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Disclaimer
+
+Some tools in this application can be used for security testing. Always ensure you have proper authorization before using these tools on any systems or networks. Unauthorized use may be illegal and unethical.
