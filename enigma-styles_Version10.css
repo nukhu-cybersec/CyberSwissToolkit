@@ -1,0 +1,376 @@
+/* Enigma Machine Section Styles */
+#enigma-machine {
+  background: linear-gradient(135deg, #050a1c, #12173a);
+  color: #e0e7ff;
+  padding: 2rem;
+  border-radius: 12px;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.enigma-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.enigma-body {
+  background: rgba(7, 12, 36, 0.8);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(81, 107, 255, 0.2);
+  backdrop-filter: blur(8px);
+}
+
+/* Rotors styling */
+.rotor-assembly {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(16, 24, 66, 0.6);
+  border-radius: 8px;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.rotor, .reflector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(22, 32, 80, 0.8);
+  border-radius: 8px;
+  border: 1px solid rgba(100, 130, 255, 0.3);
+  width: 100px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.rotor-label, .reflector-label {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: #8b9fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.rotor-display {
+  font-size: 2rem;
+  font-weight: bold;
+  background: #000;
+  color: #52ff8d;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  width: 50px;
+  text-align: center;
+  border-radius: 4px;
+  font-family: 'Digital', monospace;
+  box-shadow: inset 0 0 10px rgba(82, 255, 141, 0.3);
+  text-shadow: 0 0 8px rgba(82, 255, 141, 0.8);
+  border: 1px solid #1a442a;
+}
+
+.rotor-controls {
+  display: flex;
+  gap: 0.25rem;
+  margin: 0.5rem 0;
+}
+
+.rotor-up, .rotor-down {
+  background: #2a3564;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rotor-up:hover, .rotor-down:hover {
+  background: #3a48a0;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(58, 72, 160, 0.6);
+}
+
+.rotor-up:active, .rotor-down:active {
+  transform: translateY(1px);
+}
+
+.rotor-type-select select, .reflector-type-select select {
+  background: #131d4f;
+  color: #fff;
+  border: 1px solid #3a48a0;
+  border-radius: 4px;
+  padding: 0.25rem;
+  cursor: pointer;
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* Signal path visualization */
+.signal-path {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+#enigma-canvas {
+  background: rgba(5, 10, 30, 0.8);
+  border-radius: 8px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(81, 107, 255, 0.3);
+}
+
+/* Plugboard styling */
+.plugboard-container {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(16, 24, 66, 0.6);
+  border-radius: 8px;
+}
+
+.plugboard {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap: 0.5rem;
+  margin: 1rem 0;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .plugboard {
+    grid-template-columns: repeat(10, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .plugboard {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+.plugboard-socket {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #1a2040;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid #2a3564;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  user-select: none;
+}
+
+.plugboard-socket:hover {
+  background: #2a3564;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(42, 53, 100, 0.6);
+}
+
+.plugboard-socket.selected {
+  background: #4a5ae0;
+  border-color: #8b9fff;
+  box-shadow: 0 0 15px rgba(139, 159, 255, 0.6);
+}
+
+.plugboard-socket.connected {
+  background: #2e855c;
+  border-color: #52ff8d;
+  box-shadow: 0 0 15px rgba(82, 255, 141, 0.4);
+}
+
+.plugboard-wire {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.plugboard-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Enigma keyboard */
+.enigma-keyboard {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .enigma-keyboard {
+    grid-template-columns: repeat(9, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .enigma-keyboard {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+.enigma-key {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: #1a2040;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid #2a3564;
+  box-shadow: 0 4px 0 #0d1022;
+  user-select: none;
+}
+
+.enigma-key:hover {
+  background: #2a3564;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #0d1022;
+}
+
+.enigma-key:active, .enigma-key.active {
+  background: #4a5ae0;
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #0d1022;
+}
+
+/* Input/Output display */
+.enigma-output {
+  margin-top: 2rem;
+}
+
+.output-display {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.message-container {
+  flex: 1;
+  background: rgba(10, 17, 50, 0.8);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid rgba(81, 107, 255, 0.3);
+}
+
+.message-container h3 {
+  margin-top: 0;
+  color: #8b9fff;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.message-display {
+  font-family: 'Courier New', monospace;
+  background: #050a1c;
+  color: #52ff8d;
+  padding: 1rem;
+  border-radius: 4px;
+  min-height: 80px;
+  word-break: break-all;
+  letter-spacing: 1px;
+  font-size: 1.2rem;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.enigma-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Buttons */
+.btn {
+  background: #1a2040;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.25rem;
+  font-family: 'Roboto Mono', monospace;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+
+.btn:hover {
+  background: #2a3564;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn.primary {
+  background: #273ad5;
+}
+
+.btn.primary:hover {
+  background: #324bf0;
+}
+
+/* Additional info section */
+.enigma-info {
+  background: rgba(16, 24, 66, 0.6);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.enigma-info h3 {
+  margin-top: 0;
+  color: #8b9fff;
+}
+
+details {
+  margin: 1rem 0;
+}
+
+summary {
+  cursor: pointer;
+  padding: 0.5rem 0;
+  color: #8b9fff;
+  font-weight: bold;
+}
+
+details p, details ol {
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  background: rgba(10, 17, 50, 0.5);
+  border-radius: 6px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .enigma-container {
+    flex-direction: column;
+  }
+  
+  .rotor-assembly {
+    flex-wrap: wrap;
+  }
+  
+  .output-display {
+    flex-direction: column;
+  }
+}
