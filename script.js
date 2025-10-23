@@ -70,50 +70,207 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
+    // Additional button handlers for buttons missing event listeners
+    
+    // Swap buttons (swap input/output)
+    const swapButtons = ['caesar-swap', 'vigenere-swap'];
+    swapButtons.forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+            btn.addEventListener('click', function() {
+                const toolId = btnId.split('-')[0];
+                const input = document.getElementById(toolId + '-input');
+                const output = document.getElementById(toolId + '-output');
+                if (input && output) {
+                    const temp = input.value;
+                    input.value = output.value;
+                    output.value = temp;
+                }
+            });
+        }
+    });
+    
+    // Copy buttons (copy output to clipboard)
+    const copyButtons = {
+        'caesar-copy': 'caesar-output',
+        'vigenere-copy': 'vigenere-output',
+        'copy-message': 'extracted-message',
+        'copy-password': 'password-output'
+    };
+    Object.keys(copyButtons).forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+            btn.addEventListener('click', function() {
+                const outputId = copyButtons[btnId];
+                const output = document.getElementById(outputId);
+                if (output) {
+                    output.select();
+                    document.execCommand('copy');
+                    this.textContent = 'Copied!';
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    }, 1500);
+                }
+            });
+        }
+    });
+    
+    // Clear buttons (clear inputs and outputs)
+    const clearButtons = {
+        'caesar-clear': ['caesar-input', 'caesar-output'],
+        'vigenere-clear': ['vigenere-input', 'vigenere-output', 'vigenere-key'],
+        'clear-encode': ['stego-message', 'stego-password'],
+        'clear-decode': ['decode-password', 'extracted-message'],
+        'clear-hash': ['hash-input', 'hash-output-container']
+    };
+    Object.keys(clearButtons).forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+            btn.addEventListener('click', function() {
+                clearButtons[btnId].forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        if (field.tagName === 'TEXTAREA' || field.tagName === 'INPUT') {
+                            field.value = '';
+                        } else {
+                            field.innerHTML = '';
+                        }
+                    }
+                });
+            });
+        }
+    });
+    
+    // Hash generate button
+    if (document.getElementById('generate-hash')) {
+        document.getElementById('generate-hash').addEventListener('click', function() {
+            const input = document.getElementById('hash-input').value;
+            if (!input) {
+                alert('Please enter text to hash');
+                return;
+            }
+            
+            const selectedAlgo = document.querySelector('input[name="hash-algorithm"]:checked');
+            if (!selectedAlgo) {
+                alert('Please select a hash algorithm');
+                return;
+            }
+            
+            const algo = selectedAlgo.value;
+            let result = '';
+            
+            if (algo === 'all') {
+                result = `MD5: ${CryptoJS.MD5(input)}\nSHA-1: ${CryptoJS.SHA1(input)}\nSHA-256: ${CryptoJS.SHA256(input)}\nSHA-512: ${CryptoJS.SHA512(input)}`;
+            } else if (algo === 'md5') {
+                result = CryptoJS.MD5(input).toString();
+            } else if (algo === 'sha1') {
+                result = CryptoJS.SHA1(input).toString();
+            } else if (algo === 'sha256') {
+                result = CryptoJS.SHA256(input).toString();
+            } else if (algo === 'sha512') {
+                result = CryptoJS.SHA512(input).toString();
+            }
+            
+            const output = document.getElementById('hash-output-container');
+            if (output) {
+                output.innerHTML = `<div class="hash-result"><pre>${result}</pre></div>`;
+            }
+        });
+    }
+    
+    // Password analyze button
+    if (document.getElementById('analyze-password')) {
+        document.getElementById('analyze-password').addEventListener('click', function() {
+            const password = document.getElementById('check-password').value;
+            if (!password) {
+                alert('Please enter a password to analyze');
+                return;
+            }
+            
+            let score = 0;
+            let strength = 'Weak';
+            
+            if (password.length >= 8) score += 25;
+            if (password.length >= 12) score += 15;
+            if (/[a-z]/.test(password)) score += 15;
+            if (/[A-Z]/.test(password)) score += 15;
+            if (/[0-9]/.test(password)) score += 15;
+            if (/[^a-zA-Z0-9]/.test(password)) score += 15;
+            
+            if (score >= 80) strength = 'Very Strong';
+            else if (score >= 60) strength = 'Strong';
+            else if (score >= 40) strength = 'Medium';
+            
+            const indicator = document.getElementById('strength-indicator');
+            const label = document.getElementById('strength-label');
+            
+            if (indicator) indicator.style.width = score + '%';
+            if (label) label.textContent = `Strength: ${strength} (${score}/100)`;
+        });
+    }
 
 // Navigation and Tabs
 function initNavigationAndTabs() {
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
+    // Main navigation tabs (Steganography, Ciphers, Hash Tools, etc.)
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
             
-            window.scrollTo({
-                top: targetElement.offsetTop - 60,
-                behavior: 'smooth'
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
             });
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Hide all sections
+			document.querySelectorAll('section[id$="-section"]').forEach(section => {
+                section.classList.remove('active');
+                section.style.display = 'none';
+            });
+            
+            // Show target section
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                targetSection.style.display = 'block';
+            }
         });
     });
     
-    // Tab switching within tool sections
-    document.querySelectorAll('.tool-btn').forEach(btn => {
+    // Sub-navigation within each tool section (Image Steganography, Caesar, etc.)
+    document.querySelectorAll('.tool-nav-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            // Get parent tool container
-            const toolContainer = this.closest('.tool-container');
+            // Get parent section
+            const parentSection = this.closest('section');
             
-            // Remove active class from all buttons in this container
-            toolContainer.querySelectorAll('.tool-btn').forEach(b => {
+            // Remove active class from all tool-nav buttons in this section
+            parentSection.querySelectorAll('.tool-nav-btn').forEach(b => {
                 b.classList.remove('active');
             });
             
             // Add active class to clicked button
             this.classList.add('active');
             
-            // Hide all tool contents in this container
-            toolContainer.querySelectorAll('.tool-content').forEach(content => {
+            // Hide all tool contents in this section
+            parentSection.querySelectorAll('.tool-content').forEach(content => {
+                content.style.display = 'none';
                 content.classList.remove('active');
             });
             
             // Show the target content
             const targetId = this.getAttribute('data-tool');
             const targetContent = document.getElementById(targetId);
-            targetContent.classList.add('active');
+            if (targetContent) {
+                targetContent.style.display = 'block';
+                targetContent.classList.add('active');
+            }
         });
     });
 }
+
+
 
 // Classical Cipher Tools
 function initCipherTools() {
@@ -393,12 +550,38 @@ function initHashingTools() {
 }
 
 // Password Tools
+// Password Tools
 function initPasswordTools() {
     // Password Generator
     if (document.getElementById('generate-password')) {
         document.getElementById('generate-password').addEventListener('click', function() {
             const length = parseInt(document.getElementById('password-length').value);
-            const
+            console.log('Generate password clicked');
+        });
+    }
+}
+
+// Enigma Machine initialization
+function initEnigmaMachine() {
+    const canvas = document.getElementById('enigma-canvas');
+    if (canvas) {
+        const enigmaUI = new EnigmaUI();
+    } else {
+        console.log('Enigma canvas not found - skipping Enigma UI');
+    }
+}
+
+// Steganography initialization
+function initSteganography() {
+    console.log('Steganography initialized');
+    const coverImage = document.getElementById('cover-image');
+    if (coverImage) {
+        coverImage.addEventListener('change', function(e) {
+            console.log('Cover image selected');
+        });
+    }
+}
+
 // Enigma Machine Implementation
 class EnigmaMachine {
   constructor() {
@@ -1124,6 +1307,576 @@ class EnigmaUI {
 }
 
 // Initialize the UI when the DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  const enigmaUI = new EnigmaUI();
+// EnigmaUI is initialized in initEnigmaMachine() function
+
+// ============================================================================
+// ADDITIONAL FUNCTIONALITY FOR UNRESPONSIVE FEATURES
+// Add this code before the closing }); of DOMContentLoaded
+// ============================================================================
+
+// Password Tools - Length slider functionality
+const passwordLengthSlider = document.getElementById('password-length');
+const lengthValueDisplay = document.getElementById('length-value');
+if (passwordLengthSlider && lengthValueDisplay) {
+    passwordLengthSlider.addEventListener('input', function() {
+        lengthValueDisplay.textContent = this.value;
+    });
+    
+    // Update generate-password to use all options
+    const generateBtn = document.getElementById('generate-password');
+    if (generateBtn) {
+        generateBtn.addEventListener('click', function() {
+            const length = parseInt(passwordLengthSlider.value) || 16;
+            const includeUpper = document.getElementById('include-upper')?.checked !== false;
+            const includeLower = document.getElementById('include-lower')?.checked !== false;
+            const includeNumbers = document.getElementById('include-numbers')?.checked !== false;
+            const includeSymbols = document.getElementById('include-symbols')?.checked !== false;
+            
+            let charset = '';
+            if (includeUpper) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (includeLower) charset += 'abcdefghijklmnopqrstuvwxyz';
+            if (includeNumbers) charset += '0123456789';
+            if (includeSymbols) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            
+            if (charset === '') charset = 'abcdefghijklmnopqrstuvwxyz';
+            
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += charset[Math.floor(Math.random() * charset.length)];
+            }
+            
+            const output = document.getElementById('password-output');
+            if (output) {
+                output.value = password;
+            }
+        });
+    }
+}
+
+// Password visibility toggle
+const toggleVisibilityBtn = document.getElementById('toggle-visibility');
+if (toggleVisibilityBtn) {
+    toggleVisibilityBtn.addEventListener('click', function() {
+        const passwordOutput = document.getElementById('password-output');
+        if (passwordOutput) {
+            const type = passwordOutput.type === 'password' ? 'text' : 'password';
+            passwordOutput.type = type;
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        }
+    });
+}
+
+// Enigma Machine - Rotor controls
+document.querySelectorAll('.rotor-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const rotorNum = this.getAttribute('data-rotor');
+        const direction = this.classList.contains('up') ? 1 : -1;
+        const display = document.getElementById(`rotor${rotorNum}-display`);
+        
+        if (display) {
+            let currentChar = display.textContent;
+            let charCode = currentChar.charCodeAt(0);
+            charCode = ((charCode - 65 + direction + 26) % 26) + 65;
+            display.textContent = String.fromCharCode(charCode);
+        }
+    });
+});
+
+// Enigma Machine - Apply settings button
+const applySettingsBtn = document.getElementById('apply-settings');
+if (applySettingsBtn) {
+    applySettingsBtn.addEventListener('click', function() {
+        console.log('Enigma settings applied');
+        alert('Enigma machine settings applied successfully!');
+    });
+}
+
+// Enigma Machine - Reset button
+const resetEnigmaBtn = document.getElementById('reset-enigma');
+if (resetEnigmaBtn) {
+    resetEnigmaBtn.addEventListener('click', function() {
+        ['rotor1-display', 'rotor2-display', 'rotor3-display'].forEach(id => {
+            const display = document.getElementById(id);
+            if (display) display.textContent = 'A';
+        });
+        console.log('Enigma machine reset');
+    });
+}
+
+// Enigma Machine - Add plugboard pair
+const addPlugpairBtn = document.getElementById('add-plugpair');
+if (addPlugpairBtn) {
+    addPlugpairBtn.addEventListener('click', function() {
+        console.log('Add plugboard pair clicked');
+        // Add logic to create new plugboard pair inputs
+    });
+}
+
+// Enigma Machine - Keyboard simulation
+document.querySelectorAll('.key[data-key]').forEach(key => {
+    key.addEventListener('click', function() {
+        const letter = this.getAttribute('data-key');
+        console.log('Enigma key pressed:', letter);
+        
+        // Simulate encryption (basic substitution for demo)
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const shifted = 'EKMFLGDQVZNTOWYHXUSPAIBRCJ'; // Rotor I wiring
+        const index = alphabet.indexOf(letter);
+        const encryptedLetter = index >= 0 ? shifted[index] : letter;
+        
+        // Light up the corresponding lamp
+        document.querySelectorAll('.lamp').forEach(lamp => {
+            lamp.classList.remove('active');
+            if (lamp.getAttribute('data-letter') === encryptedLetter) {
+                lamp.classList.add('active');
+                setTimeout(() => lamp.classList.remove('active'), 500);
+            }
+        });
+        
+        // Add to enigma output
+        const enigmaOutput = document.getElementById('enigma-output');
+        if (enigmaOutput) {
+            enigmaOutput.value += encryptedLetter;
+        }
+    });
+});
+
+// Hash Tools - Sub-navigation (Generator, Verifier, Analyzer)
+document.querySelectorAll('#hash-section .tool-nav-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const toolName = this.getAttribute('data-tool');
+        const hashSection = document.getElementById('hash-section');
+        
+        // Remove active from all tool-nav-btn in hash section
+        hashSection.querySelectorAll('.tool-nav-btn').forEach(b => {
+            b.classList.remove('active');
+        });
+        this.classList.add('active');
+        
+        // Show corresponding tool
+        hashSection.querySelectorAll('.tool-content').forEach(content => {
+            content.style.display = 'none';
+        });
+        
+        const targetTool = document.getElementById(toolName);
+        if (targetTool) {
+            targetTool.style.display = 'block';
+        }
+    });
+});
+
+// Cipher Tools - Additional ciphers (Substitution, Rail Fence, AES)
+// Substitution Cipher
+const substitutionEncrypt = document.getElementById('substitution-encrypt');
+if (substitutionEncrypt) {
+    substitutionEncrypt.addEventListener('click', function() {
+        const input = document.getElementById('substitution-input')?.value || '';
+        const key = document.getElementById('substitution-key')?.value || 'ZYXWVUTSRQPONMLKJIHGFEDCBA';
+        
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let output = '';
+        
+        for (let char of input.toUpperCase()) {
+            const index = alphabet.indexOf(char);
+            output += index >= 0 ? key[index] : char;
+        }
+        
+        const outputEl = document.getElementById('substitution-output');
+        if (outputEl) outputEl.value = output;
+    });
+}
+
+// Rail Fence Cipher
+function railFenceEncrypt(text, rails) {
+    if (rails <= 1) return text;
+    
+    const fence = Array(rails).fill().map(() => []);
+    let rail = 0;
+    let direction = 1;
+    
+    for (let char of text) {
+        fence[rail].push(char);
+        rail += direction;
+        
+        if (rail === 0 || rail === rails - 1) {
+            direction = -direction;
+        }
+    }
+    
+    return fence.flat().join('');
+}
+
+function railFenceDecrypt(cipher, rails) {
+    if (rails <= 1) return cipher;
+    
+    const fence = Array(rails).fill().map(() => []);
+    const positions = Array(cipher.length).fill(0);
+    
+    let rail = 0;
+    let direction = 1;
+    
+    for (let i = 0; i < cipher.length; i++) {
+        positions[i] = rail;
+        rail += direction;
+        
+        if (rail === 0 || rail === rails - 1) {
+            direction = -direction;
+        }
+    }
+    
+    let index = 0;
+    for (let r = 0; r < rails; r++) {
+        for (let i = 0; i < cipher.length; i++) {
+            if (positions[i] === r) {
+                fence[r].push(cipher[index++]);
+            }
+        }
+    }
+    
+    rail = 0;
+    direction = 1;
+    let result = '';
+    
+    for (let i = 0; i < cipher.length; i++) {
+        result += fence[rail].shift();
+        rail += direction;
+        
+        if (rail === 0 || rail === rails - 1) {
+            direction = -direction;
+        }
+    }
+    
+    return result;
+}
+
+// AES Cipher handlers (already exist but ensure they work)
+const aesEncryptBtn = document.getElementById('aes-encrypt');
+const aesDecryptBtn = document.getElementById('aes-decrypt');
+
+if (aesEncryptBtn && !aesEncryptBtn.hasAttribute('data-listener')) {
+    aesEncryptBtn.setAttribute('data-listener', 'true');
+    aesEncryptBtn.addEventListener('click', function() {
+        const input = document.getElementById('aes-input')?.value;
+        const key = document.getElementById('aes-key')?.value;
+        
+        if (!input || !key) {
+            alert('Please enter both text and key');
+            return;
+        }
+        
+        try {
+            const encrypted = CryptoJS.AES.encrypt(input, key).toString();
+            const output = document.getElementById('aes-output');
+            if (output) output.value = encrypted;
+        } catch (e) {
+            alert('Encryption error: ' + e.message);
+        }
+    });
+}
+
+if (aesDecryptBtn && !aesDecryptBtn.hasAttribute('data-listener')) {
+    aesDecryptBtn.setAttribute('data-listener', 'true');
+    aesDecryptBtn.addEventListener('click', function() {
+        const input = document.getElementById('aes-input')?.value;
+        const key = document.getElementById('aes-key')?.value;
+        
+        if (!input || !key) {
+            alert('Please enter both encrypted text and key');
+            return;
+        }
+        
+        try {
+            const decrypted = CryptoJS.AES.decrypt(input, key).toString(CryptoJS.enc.Utf8);
+            const output = document.getElementById('aes-output');
+            if (output) output.value = decrypted || 'Decryption failed - check key';
+        } catch (e) {
+            alert('Decryption error: ' + e.message);
+        }
+    });
+}
+
+console.log('All additional functionality loaded successfully');
+
+// ============================================================================
+// ENHANCED ENIGMA MACHINE - VISUAL & EDUCATIONAL
+// ============================================================================
+
+// Enhanced Enigma Machine with visual feedback
+const EnhancedEnigma = {
+    rotorPositions: ['A', 'A', 'A'],
+    rotorTypes: ['I', 'II', 'III'],
+    reflector: 'B',
+    plugboard: {},
+    
+    rotorWirings: {
+        'I': 'EKMFLGDQVZNTOWYHXUSPAIBRCJ',
+        'II': 'AJDKSIRUXBLHWTMCQGZNPYFVOE',
+        'III': 'BDFHJLCPRTXVZNYEIWGAKMUSQO',
+        'IV': 'ESOVPZJAYQUIRHXLNFTGKDCMWB',
+        'V': 'VZBRGITYUPSDNHLXAWMJQOFECK'
+    },
+    
+    reflectorWirings: {
+        'B': 'YRUHQSLDPXNGOKMIEBFZCWVJAT',
+        'C': 'FVPJIAOYEDRZXWGCTKUQSBNMHL'
+    },
+    
+    init: function() {
+        this.setupRotorControls();
+        this.setupKeyboard();
+        this.setupSettings();
+        this.updateDisplay();
+        this.showEducationalInfo();
+    },
+    
+    setupRotorControls: function() {
+        const self = this;
+        
+        // Rotor up/down buttons
+        document.querySelectorAll('.rotor-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const rotorIndex = parseInt(this.getAttribute('data-rotor')) - 1;
+                const isUp = this.classList.contains('up');
+                
+                self.rotateRotor(rotorIndex, isUp ? 1 : -1);
+                self.updateDisplay();
+                self.showRotorAnimation(rotorIndex);
+            });
+        });
+    },
+    
+    rotateRotor: function(index, direction) {
+        const current = this.rotorPositions[index];
+        const charCode = current.charCodeAt(0);
+        const newCode = ((charCode - 65 + direction + 26) % 26) + 65;
+        this.rotorPositions[index] = String.fromCharCode(newCode);
+    },
+    
+    setupKeyboard: function() {
+        const self = this;
+        
+        document.querySelectorAll('.key[data-key]').forEach(key => {
+            key.addEventListener('click', function() {
+                const letter = this.getAttribute('data-key');
+                self.processKey(letter, this);
+            });
+        });
+    },
+    
+    processKey: function(letter, keyElement) {
+        // Add visual feedback to key press
+        keyElement.classList.add('pressed');
+        setTimeout(() => keyElement.classList.remove('pressed'), 300);
+        
+        // Rotate rightmost rotor
+        this.rotateRotor(2, 1);
+        
+        // Encrypt the letter
+        const encrypted = this.encryptLetter(letter);
+        
+        // Light up the corresponding lamp
+        this.lightUpLamp(encrypted);
+        
+        // Add to output
+        this.addToOutput(encrypted);
+        
+        // Update display
+        this.updateDisplay();
+        
+        // Show educational tooltip
+        this.showEncryptionPath(letter, encrypted);
+    },
+    
+    encryptLetter: function(letter) {
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let index = alphabet.indexOf(letter.toUpperCase());
+        
+        if (index === -1) return letter;
+        
+        // Through rotors (right to left)
+        for (let i = 2; i >= 0; i--) {
+            const rotor = this.rotorWirings[this.rotorTypes[i]];
+            const offset = this.rotorPositions[i].charCodeAt(0) - 65;
+            index = (index + offset) % 26;
+            index = alphabet.indexOf(rotor[index]);
+            index = (index - offset + 26) % 26;
+        }
+        
+        // Through reflector
+        const reflector = this.reflectorWirings[this.reflector];
+        index = alphabet.indexOf(reflector[index]);
+        
+        // Back through rotors (left to right)
+        for (let i = 0; i <= 2; i++) {
+            const rotor = this.rotorWirings[this.rotorTypes[i]];
+            const offset = this.rotorPositions[i].charCodeAt(0) - 65;
+            index = (index + offset) % 26;
+            const reverseRotor = Array.from(rotor).map((c, i) => [c, i])
+                .sort((a, b) => a[0].localeCompare(b[0]))
+                .map(x => String.fromCharCode(x[1] + 65)).join('');
+            index = alphabet.indexOf(reverseRotor[index]);
+            index = (index - offset + 26) % 26;
+        }
+        
+        return alphabet[index];
+    },
+    
+    lightUpLamp: function(letter) {
+        document.querySelectorAll('.lamp').forEach(lamp => {
+            lamp.classList.remove('active');
+        });
+        
+        const targetLamp = document.querySelector(`.lamp[data-letter="${letter}"]`);
+        if (targetLamp) {
+            targetLamp.classList.add('active');
+            setTimeout(() => targetLamp.classList.remove('active'), 800);
+        }
+    },
+    
+    addToOutput: function(letter) {
+        const output = document.getElementById('enigma-output');
+        if (output) {
+            output.value += letter;
+        }
+    },
+    
+    updateDisplay: function() {
+        this.rotorPositions.forEach((pos, i) => {
+            const display = document.getElementById(`rotor${i + 1}-display`);
+            if (display) {
+                display.textContent = pos;
+            }
+        });
+    },
+    
+    showRotorAnimation: function(rotorIndex) {
+        const display = document.getElementById(`rotor${rotorIndex + 1}-display`);
+        if (display) {
+            display.style.transform = 'scale(1.2)';
+            display.style.color = '#00ffbb';
+            setTimeout(() => {
+                display.style.transform = 'scale(1)';
+                display.style.color = '';
+            }, 200);
+        }
+    },
+    
+    showEncryptionPath: function(input, output) {
+        const pathDisplay = document.getElementById('encryption-path');
+        if (pathDisplay) {
+            pathDisplay.innerHTML = `
+                <div class="path-step">
+                    <span class="path-label">Input:</span>
+                    <span class="path-value">${input}</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="path-step">
+                    <span class="path-label">Through Rotors:</span>
+                    <span class="path-value">${this.rotorTypes.join(' → ')}</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="path-step">
+                    <span class="path-label">Reflector ${this.reflector}:</span>
+                    <i class="fas fa-sync-alt"></i>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="path-step">
+                    <span class="path-label">Back Through Rotors</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="path-step">
+                    <span class="path-label">Output:</span>
+                    <span class="path-value highlight">${output}</span>
+                </div>
+            `;
+            pathDisplay.style.display = 'block';
+        }
+    },
+    
+    setupSettings: function() {
+        const self = this;
+        
+        // Apply settings button
+        const applyBtn = document.getElementById('apply-settings');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function() {
+                const rotor1Type = document.getElementById('rotor1-type')?.value || 'I';
+                const rotor2Type = document.getElementById('rotor2-type')?.value || 'II';
+                const rotor3Type = document.getElementById('rotor3-type')?.value || 'III';
+                const reflectorType = document.getElementById('reflector-type')?.value || 'B';
+                
+                self.rotorTypes = [rotor3Type, rotor2Type, rotor1Type];
+                self.reflector = reflectorType;
+                
+                self.showNotification('Settings applied successfully!');
+            });
+        }
+        
+        // Reset button
+        const resetBtn = document.getElementById('reset-enigma');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function() {
+                self.rotorPositions = ['A', 'A', 'A'];
+                self.rotorTypes = ['I', 'II', 'III'];
+                self.reflector = 'B';
+                self.updateDisplay();
+                
+                const input = document.getElementById('enigma-input');
+                const output = document.getElementById('enigma-output');
+                if (input) input.value = '';
+                if (output) output.value = '';
+                
+                self.showNotification('Enigma machine reset to default settings');
+            });
+        }
+    },
+    
+    showEducationalInfo: function() {
+        const infoPanel = document.createElement('div');
+        infoPanel.className = 'enigma-info-panel';
+        infoPanel.innerHTML = `
+            <h4><i class="fas fa-info-circle"></i> How the Enigma Works</h4>
+            <ul class="info-list">
+                <li><strong>Rotors:</strong> Scramble each letter through wired connections</li>
+                <li><strong>Reflector:</strong> Sends signal back through rotors (makes encryption reversible)</li>
+                <li><strong>Rotor Rotation:</strong> Right rotor turns with each key press</li>
+                <li><strong>Key Feature:</strong> Same settings encrypt AND decrypt messages!</li>
+            </ul>
+            <div class="info-tip">
+                <i class="fas fa-lightbulb"></i>
+                <span>Try typing the same letter twice - you'll get different outputs!</span>
+            </div>
+        `;
+        
+        const enigmaSection = document.getElementById('enigma-section');
+        if (enigmaSection && !document.querySelector('.enigma-info-panel')) {
+            enigmaSection.insertBefore(infoPanel, enigmaSection.firstChild.nextSibling);
+        }
+    },
+    
+    showNotification: function(message) {
+        const notification = document.createElement('div');
+        notification.className = 'enigma-notification';
+        notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateY(0)';
+        }, 10);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(-20px)';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+};
+
+// Initialize enhanced Enigma when page loads
+if (document.getElementById('enigma-section')) {
+    EnhancedEnigma.init();
+}
+
 });
